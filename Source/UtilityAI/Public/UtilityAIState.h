@@ -10,7 +10,8 @@
 class UUtilityAIComponent;
 class UUtilityAIContext;
 /**
- * 
+ * @class UUtilityAIState
+ * @brief Represents a single AI behavior or action
  */
 UCLASS(Abstract, Blueprintable, Blueprintable)
 class UTILITYAI_API UUtilityAIState : public UObject
@@ -21,19 +22,35 @@ public:
 	UUtilityAIState();
 
 protected:
-	// The state type - set in constructor or defaults
+	/**
+	 * @brief Unique identifier for the state
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI State")
 	int32 StateType = 0;
 
 public:
-	// Virtual function to compute score based on context (0.0f to 1.0f typically)
+	/**
+	 * @brief Calculates suitability score based on current context
+	 * @param Context Current data context
+	 * @return Evaluated Score [0.0 - 1.0]
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AI State")
 	float GetScore(const UUtilityAIContext* Context) const;
 
-	// Virtual execution function - override in child classes to perform actions
+
+	/**
+	 * @brief Performs the state's behavior
+	 * @param Owner Utility AI Owner (AI Controller)
+	 * @param InSystem Utility AI Actor Component (suboject of AI Controller)
+	 * @param InContext Current data context
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AI State")
 	void Execute(AActor* Owner, UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext);
 
+	/**
+	 * Retrieves unique identifier for the state
+	 * @return Unique identifier for the state
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AI State")
 	FORCEINLINE int32 GetStateType() const { return StateType; }
 };

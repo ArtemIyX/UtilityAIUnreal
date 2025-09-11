@@ -75,6 +75,7 @@ void UUtilityAIComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 				Processors[i] = nullptr;
 			}
 		}
+		Processors.Empty();
 	}
 }
 

@@ -6,74 +6,119 @@
 #include "Components/ActorComponent.h"
 #include "UtilityAIComponent.generated.h"
 
-
 class UUtilityAIContextCollector;
 class UUtilityAIProcessor;
 class UUtilityAIContext;
 
+/**
+ * @brief Actor component that orchestrates the Utility AI system
+ */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class UTILITYAI_API UUtilityAIComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UUtilityAIComponent();
+    /** @brief Default constructor for UUtilityAIComponent */
+    UUtilityAIComponent();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, NoClear, Category = "AI Component")
-	TSubclassOf<UUtilityAIContext> ContextClass;
+    /** @brief Class type for the AI context */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, NoClear, Category = "AI Component")
+    TSubclassOf<UUtilityAIContext> ContextClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, NoClear, Category = "AI Component")
-	TSubclassOf<UUtilityAIContextCollector> ContextCollectorClass;
+    /** @brief Class type for the context collector */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, NoClear, Category = "AI Component")
+    TSubclassOf<UUtilityAIContextCollector> ContextCollectorClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "AI Component")
-	TArray<TSubclassOf<UUtilityAIProcessor>> DefaultProcessors;
-	
-	// The shared context - filled on tick
-	UPROPERTY(BlueprintReadOnly, Category = "AI Component")
-	TObjectPtr<UUtilityAIContext> Context;
+    /** @brief Array of default processor classes */
+    UPROPERTY(BlueprintReadOnly, Category = "AI Component")
+    TArray<TSubclassOf<UUtilityAIProcessor>> DefaultProcessors;
+    
+    /** @brief Shared context filled on tick */
+    UPROPERTY(BlueprintReadOnly, Category = "AI Component")
+    TObjectPtr<UUtilityAIContext> Context;
 
-	// Context collector
-	UPROPERTY(BlueprintReadOnly, Category = "AI Component")
-	TObjectPtr<UUtilityAIContextCollector> ContextCollector;
-	
-	// List of processors
-	UPROPERTY(BlueprintReadOnly, Category = "AI Component")
-	TArray<TObjectPtr<UUtilityAIProcessor>> Processors;
-
-protected:
-	// Fill context with actor data (override or extend)
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
-	virtual void UpdateContext();
+    /** @brief Context collector instance */
+    UPROPERTY(BlueprintReadOnly, Category = "AI Component")
+    TObjectPtr<UUtilityAIContextCollector> ContextCollector;
+    
+    /** @brief List of active processor instances */
+    UPROPERTY(BlueprintReadOnly, Category = "AI Component")
+    TArray<TObjectPtr<UUtilityAIProcessor>> Processors;
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+    /**
+     * @brief Updates the context with actor data
+     * @note Can be overridden or extended in derived classes
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
+    virtual void UpdateContext();
+
+protected:
+    /**
+     * @brief Called when the game starts
+     * @note Initializes the component
+     */
+    virtual void BeginPlay() override;
+
+    /**
+     * @brief Called when the component is destroyed or the game ends
+     * @param EndPlayReason Reason for ending play
+     */
+    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+    /**
+     * @brief Called every frame to update the component
+     * @param DeltaTime Time since last frame
+     * @param TickType Type of tick
+     * @param ThisTickFunction Tick function for this component
+     */
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+                               FActorComponentTickFunction* ThisTickFunction) override;
 
-	// Get processor by class (using template or specify class)
-	template <class T>
-	T* GetProcessorByClass() const;
+    /**
+     * @brief Gets a processor by its class type
+     * @tparam T Type of the processor
+     * @return Pointer to the processor of type T, or nullptr if not found
+     */
+    template <class T>
+    T* GetProcessorByClass() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, BlueprintAuthorityOnly, Category="AI Component")
-	FORCEINLINE UUtilityAIContext* GetContext() const { return Context.Get(); }
+    /**
+     * @brief Gets the current AI context
+     * @return Pointer to the current context
+     */
+    UFUNCTION(BlueprintCallable, BlueprintPure, BlueprintAuthorityOnly, Category="AI Component")
+    FORCEINLINE UUtilityAIContext* GetContext() const { return Context.Get(); }
 
-	// Add a processor
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
-	void AddProcessor(UUtilityAIProcessor* NewProcessor);
+    /**
+     * @brief Adds a processor to the component
+     * @param NewProcessor Processor to add
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
+    void AddProcessor(UUtilityAIProcessor* NewProcessor);
 
-	// Remove a processor by pointer
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
-	void RemoveProcessor(UUtilityAIProcessor* ProcessorToRemove);
+    /**
+     * @brief Removes a processor from the component
+     * @param ProcessorToRemove Processor to remove
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
+    void RemoveProcessor(UUtilityAIProcessor* ProcessorToRemove);
 
-	// Get processor by type
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
-	UUtilityAIProcessor* GetProcessorByType(int32 Type) const;
+    /**
+     * @brief Gets a processor by its type
+     * @param Type Type identifier of the processor
+     * @return Pointer to the processor, or nullptr if not found
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
+    UUtilityAIProcessor* GetProcessorByType(int32 Type) const;
 
-	// Execute best action for a specific processor type
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
-	void ExecuteBestForProcessorType(int32 Type);
+    /**
+     * @brief Executes the best action for a specific processor type
+     * @param Type Type identifier of the processor
+     */
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component")
+    void ExecuteBestForProcessorType(int32 Type);
 };

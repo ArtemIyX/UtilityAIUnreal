@@ -74,6 +74,24 @@ UUtilityAIState* UUtilityAIProcessor::FindHighestScoringState(const UUtilityAICo
 	return BestState;
 }
 
+void UUtilityAIProcessor::BeginDestroy()
+{
+	const int32 n = States.Num();
+	if (n > 0)
+	{
+		for (int32 i = 0; i < n; ++i)
+		{
+			if (States[i])
+			{
+				States[i]->ConditionalBeginDestroy();
+				States[i] = nullptr;
+			}
+		}
+	}
+	States.Empty();
+	UObject::BeginDestroy();
+}
+
 void UUtilityAIProcessor::InitDefaultStates()
 {
 	for (TSubclassOf<UUtilityAIState> el : DefaultStates)

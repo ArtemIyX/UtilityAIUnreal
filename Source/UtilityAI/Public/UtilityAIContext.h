@@ -7,7 +7,9 @@
 #include "UtilityAIContext.generated.h"
 
 /**
- * 
+ * @class UUtilityAIContext
+ * @brief Base context class that holds data used by states for scoring and execution.
+ * @note Inherit from this to create custom context data for your AI.
  */
 UCLASS(Abstract, Blueprintable, BlueprintType)
 class UTILITYAI_API UUtilityAIContext : public UObject
