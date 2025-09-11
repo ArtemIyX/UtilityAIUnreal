@@ -1,4 +1,5 @@
-# Utility AI Plugin
+# Utility AI Plugin for Unreal Engine (Any version, 4.27, 5.0-5.6)
+> Tested on 5.6
 
 A flexible Utility AI system for Unreal Engine that enables context-driven decision making for AI agents. 
 
