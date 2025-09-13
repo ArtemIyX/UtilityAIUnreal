@@ -3,9 +3,8 @@
 
 #include "UtilityAIState.h"
 
-UUtilityAIState::UUtilityAIState()
+UUtilityAIState::UUtilityAIState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer), StateType(0)
 {
-	StateType = 0;
 }
 
 

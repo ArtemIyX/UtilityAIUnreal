@@ -96,6 +96,7 @@ void UUtilityAIComponent::AddProcessor(UUtilityAIProcessor* NewProcessor)
 	if (NewProcessor && !Processors.Contains(NewProcessor))
 	{
 		Processors.Add(NewProcessor);
+		NewProcessor->InitDefaultStates();
 	}
 }
 

@@ -13,20 +13,21 @@ class UUtilityAIContext;
  * @class UUtilityAIState
  * @brief Represents a single AI behavior or action
  */
-UCLASS(Abstract, Blueprintable, Blueprintable)
+UCLASS(Blueprintable, Blueprintable)
 class UTILITYAI_API UUtilityAIState : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	UUtilityAIState();
+	UUtilityAIState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	/**
-	 * @brief Unique identifier for the state
+	 * @brief Unique identifier for the state.
+	 * @note Must be set in C++ Constructor
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI State")
-	int32 StateType = 0;
+	UPROPERTY(BlueprintReadOnly, Category = "AI State")
+	int32 StateType;
 
 public:
 	/**

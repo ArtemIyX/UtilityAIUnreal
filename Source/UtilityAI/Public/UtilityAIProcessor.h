@@ -22,8 +22,11 @@ public:
     UUtilityAIProcessor();
 
 protected:
-    /** @brief Type identifier for the processor */
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI Processor")
+    /**
+     * @brief Type identifier for the processor
+     * @note Must be set in C++
+     */
+    UPROPERTY(BlueprintReadOnly, Category = "AI Processor")
     int32 ProcessorType;
 
     /** @brief Array of default state classes */
@@ -88,6 +91,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AI Processor")
     UUtilityAIState* GetBestState(const UUtilityAIContext* InContext, float& OutScore) const;
 
+    UFUNCTION(BlueprintCallable, Category="AI Processor")
+    void GetScoreMap(const UUtilityAIContext* InContext, TMap<UUtilityAIState*, float>& OutScoreMap,
+         TMap<UUtilityAIState*, float>& OutScoreMapNormalized);
+    
     /**
      * @brief Gets a state by its type
      * @param InType The type identifier of the state

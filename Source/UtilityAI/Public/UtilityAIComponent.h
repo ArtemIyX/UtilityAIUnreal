@@ -32,7 +32,7 @@ protected:
     TSubclassOf<UUtilityAIContextCollector> ContextCollectorClass;
 
     /** @brief Array of default processor classes */
-    UPROPERTY(BlueprintReadOnly, Category = "AI Component")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI Component")
     TArray<TSubclassOf<UUtilityAIProcessor>> DefaultProcessors;
     
     /** @brief Shared context filled on tick */

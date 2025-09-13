@@ -41,6 +41,58 @@ UUtilityAIState* UUtilityAIProcessor::GetBestState(const UUtilityAIContext* InCo
 	return FindHighestScoringState(InContext, OutScore);
 }
 
+void UUtilityAIProcessor::GetScoreMap(const UUtilityAIContext* InContext, TMap<UUtilityAIState*, float>& OutScoreMap,
+                                               TMap<UUtilityAIState*, float>& OutScoreMapNormalized)
+{
+	/*if (!InContext)
+		return;
+	
+	OutScoreMap.Empty();
+	for (TObjectPtr<UUtilityAIState> el : States)
+	{
+		if (el)
+		{
+			OutScoreMap.Add(el.Get(), el->GetScore(InContext));
+		}
+	}*/
+	OutScoreMap.Empty();
+	OutScoreMapNormalized.Empty();
+
+	if (!InContext)
+		return;
+
+	// 1. Collect raw scores
+	for (TObjectPtr<UUtilityAIState> el : States)
+	{
+		if (!el)
+			continue;
+
+		const float rawScore = el->GetScore(InContext);
+		OutScoreMap.Add(el.Get(), rawScore);
+		OutScoreMapNormalized.Add(el.Get(), rawScore);   // temporary copy
+	}
+
+	// 2. Early-out if nothing to normalise
+	if (OutScoreMapNormalized.Num() == 0)
+		return;
+
+	// 3. Find max raw score
+	float maxScore = 0.f;
+	for (const TPair<UUtilityAIState*, float>& Pair : OutScoreMapNormalized)
+	{
+		maxScore = FMath::Max(maxScore, Pair.Value);
+	}
+
+	// 4. Normalise in-place (only if non-zero)
+	if (maxScore > SMALL_NUMBER)
+	{
+		for (TPair<UUtilityAIState*, float>& Pair : OutScoreMapNormalized)
+		{
+			Pair.Value /= maxScore;
+		}
+	}
+}
+
 UUtilityAIState* UUtilityAIProcessor::GetStateByType(int32 InType) const
 {
 	for (UUtilityAIState* State : States)
@@ -98,7 +150,7 @@ void UUtilityAIProcessor::InitDefaultStates()
 	{
 		if (el)
 		{
-			UUtilityAIState* stateObject = NewObject<UUtilityAIState>(el);
+			UUtilityAIState* stateObject = NewObject<UUtilityAIState>(this, el);
 			AddState(stateObject);
 		}
 	}
