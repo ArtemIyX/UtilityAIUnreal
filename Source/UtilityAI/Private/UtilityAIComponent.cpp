@@ -105,18 +105,7 @@ void UUtilityAIComponent::RemoveProcessor(UUtilityAIProcessor* ProcessorToRemove
 	Processors.Remove(ProcessorToRemove);
 }
 
-template <class T>
-T* UUtilityAIComponent::GetProcessorByClass() const
-{
-	for (UUtilityAIProcessor* proc : Processors)
-	{
-		if (proc && proc->IsA(T::StaticClass()))
-		{
-			return Cast<T>(proc);
-		}
-	}
-	return nullptr;
-}
+
 
 UUtilityAIProcessor* UUtilityAIComponent::GetProcessorByType(int32 Type) const
 {

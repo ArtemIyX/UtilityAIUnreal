@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UtilityAIProcessor.h"
 #include "Components/ActorComponent.h"
 #include "UtilityAIComponent.generated.h"
 
@@ -84,7 +85,17 @@ public:
      * @return Pointer to the processor of type T, or nullptr if not found
      */
     template <class T>
-    T* GetProcessorByClass() const;
+    T* GetProcessorByClass() const
+	{
+    	for (const TObjectPtr<UUtilityAIProcessor>& el : Processors)
+    	{
+    		if (el && el->IsA(T::StaticClass()))
+    		{
+    			return Cast<T>(el.Get());
+    		}
+    	}
+    	return nullptr;
+    }
 
     /**
      * @brief Gets the current AI context
