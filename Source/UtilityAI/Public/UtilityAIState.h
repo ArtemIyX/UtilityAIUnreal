@@ -26,7 +26,7 @@ protected:
 	 * @brief Unique identifier for the state.
 	 * @note Must be set in C++ Constructor
 	 */
-	UPROPERTY(BlueprintReadOnly, Category = "AI State")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="false"), Category = "AI State")
 	int32 StateType;
 
 public:
