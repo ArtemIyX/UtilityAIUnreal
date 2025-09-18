@@ -5,9 +5,9 @@
 #include "UtilityAIState.h"
 
 
-UUtilityAIProcessor::UUtilityAIProcessor(): ProcessorType(0)
-{
-}
+UUtilityAIProcessor::UUtilityAIProcessor(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, ProcessorType(0) {}
 
 
 void UUtilityAIProcessor::GetCurrentStates(TArray<UUtilityAIState*>& OutStates) const
@@ -42,7 +42,7 @@ UUtilityAIState* UUtilityAIProcessor::GetBestState(const UUtilityAIContext* InCo
 }
 
 void UUtilityAIProcessor::GetScoreMap(const UUtilityAIContext* InContext, TMap<UUtilityAIState*, float>& OutScoreMap,
-                                               TMap<UUtilityAIState*, float>& OutScoreMapNormalized)
+	TMap<UUtilityAIState*, float>& OutScoreMapNormalized)
 {
 	OutScoreMap.Empty();
 	OutScoreMapNormalized.Empty();
@@ -58,7 +58,7 @@ void UUtilityAIProcessor::GetScoreMap(const UUtilityAIContext* InContext, TMap<U
 
 		const float rawScore = el->GetScore(InContext);
 		OutScoreMap.Add(el.Get(), rawScore);
-		OutScoreMapNormalized.Add(el.Get(), rawScore);   // temporary copy
+		OutScoreMapNormalized.Add(el.Get(), rawScore); // temporary copy
 	}
 
 	// 2. Early-out if nothing to normalise

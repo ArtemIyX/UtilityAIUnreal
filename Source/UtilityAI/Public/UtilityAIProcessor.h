@@ -20,7 +20,7 @@ class UTILITYAI_API UUtilityAIProcessor : public UObject
 
 public:
 	/** @brief Default constructor for UUtilityAIProcessor */
-	UUtilityAIProcessor();
+	UUtilityAIProcessor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	/**
