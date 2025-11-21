@@ -13,7 +13,7 @@ UUtilityAIComponent::UUtilityAIComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	ContextClass = UUtilityAIContext::StaticClass();
 	ContextCollectorClass = UUtilityAIContextCollector::StaticClass();
-	DefaultProcessors = {UUtilityAIProcessor::StaticClass()};
+	DefaultProcessors = { UUtilityAIProcessor::StaticClass() };
 }
 
 void UUtilityAIComponent::BeginPlay()
@@ -44,6 +44,16 @@ void UUtilityAIComponent::BeginPlay()
 				AddProcessor(processorObject);
 			}
 		}
+
+		// Initialize considerations
+		for (TSubclassOf<UUtilityAIConsideration> el : DefaultConsiderations)
+		{
+			if (el)
+			{
+				UUtilityAIConsideration* consObject = NewObject<UUtilityAIConsideration>(this, el);
+				AddConsideration(consObject);
+			}
+		}
 	}
 }
 
@@ -66,7 +76,7 @@ void UUtilityAIComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			ContextCollector = nullptr;
 		}
 
-		int32 processorsNum = Processors.Num();
+		const int32 processorsNum = Processors.Num();
 		for (int32 i = 0; i < processorsNum; ++i)
 		{
 			if (Processors[i])
@@ -76,11 +86,23 @@ void UUtilityAIComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			}
 		}
 		Processors.Empty();
+
+		const int32 consNum = Considerations.Num();
+		for (int32 i = 0; i < consNum; ++i)
+		{
+			if (Considerations[i])
+			{
+				Considerations[i]->ConditionalBeginDestroy();
+				Considerations[i] = nullptr;
+			}
+		}
+		Considerations.Empty();
+		ConsiderationsMap.Empty();
 	}
 }
 
 void UUtilityAIComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                        FActorComponentTickFunction* ThisTickFunction)
+	FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (GetWorld()->GetNetMode() == NM_Standalone
@@ -91,29 +113,27 @@ void UUtilityAIComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-void UUtilityAIComponent::AddProcessor(UUtilityAIProcessor* NewProcessor)
+void UUtilityAIComponent::AddProcessor(UUtilityAIProcessor* InNewProcessor)
 {
-	if (NewProcessor && !Processors.Contains(NewProcessor))
+	if (InNewProcessor && !Processors.Contains(InNewProcessor))
 	{
-		Processors.Add(NewProcessor);
-		NewProcessor->InitDefaultStates();
+		Processors.Add(InNewProcessor);
+		InNewProcessor->InitDefaultStates();
 	}
 }
 
-void UUtilityAIComponent::RemoveProcessor(UUtilityAIProcessor* ProcessorToRemove)
+void UUtilityAIComponent::RemoveProcessor(UUtilityAIProcessor* InProcessorToRemove)
 {
-	Processors.Remove(ProcessorToRemove);
+	Processors.Remove(InProcessorToRemove);
 }
-
-
 
 UUtilityAIProcessor* UUtilityAIComponent::GetProcessorByType(int32 Type) const
 {
-	for (UUtilityAIProcessor* proc : Processors)
+	for (const TObjectPtr<UUtilityAIProcessor>& proc : Processors)
 	{
 		if (proc && proc->GetProcessorType() == Type)
 		{
-			return proc;
+			return proc.Get();
 		}
 	}
 	return nullptr;
@@ -130,6 +150,54 @@ void UUtilityAIComponent::ExecuteBestForProcessorType(int32 Type)
 		{
 			bestState->Execute(GetOwner(), this, Context);
 		}
+	}
+}
+
+UUtilityAIConsideration* UUtilityAIComponent::GetConsiderationById(const FName& InId) const
+{
+	if (ConsiderationsMap.Contains(InId))
+	{
+		return ConsiderationsMap[InId].Get();
+	}
+	return nullptr;
+
+	/*for (const TObjectPtr<UUtilityAIConsideration>& consideration : Considerations)
+	{
+		if (consideration && consideration->GetId() == InId)
+		{
+			return consideration.Get();
+		}
+	}
+	return nullptr;*/
+}
+
+void UUtilityAIComponent::AddConsideration(UUtilityAIConsideration* InNewConsideration)
+{
+	if (InNewConsideration && !Considerations.Contains(InNewConsideration))
+	{
+		Considerations.Add(InNewConsideration);
+		ConsiderationsMap.Add(InNewConsideration->GetId(), InNewConsideration);
+	}
+}
+
+void UUtilityAIComponent::RemoveConsideration(UUtilityAIConsideration* InConsiderationToRemove)
+{
+	if (InConsiderationToRemove)
+	{
+		const FName id = InConsiderationToRemove->GetId();
+		if (ConsiderationsMap.Contains(id))
+		{
+			ConsiderationsMap.Remove(id);
+		}
+	}
+	Considerations.Remove(InConsiderationToRemove);
+}
+
+void UUtilityAIComponent::RemoveConsiderationById(const FName& InId)
+{
+	if (UUtilityAIConsideration* consideration = GetConsiderationById(InId))
+	{
+		RemoveConsideration(consideration);
 	}
 }
 
