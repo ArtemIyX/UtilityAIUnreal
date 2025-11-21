@@ -9,7 +9,7 @@ UUtilityAIConsideration::UUtilityAIConsideration(const FObjectInitializer& Objec
 	Id = NAME_None;
 }
 
-float UUtilityAIConsideration::GetScore_Implementation(AActor* Owner, UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext) const
+float UUtilityAIConsideration::GetScore_Implementation(AActor* Owner, const UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext) const
 {
 	return 0.0f;
 }

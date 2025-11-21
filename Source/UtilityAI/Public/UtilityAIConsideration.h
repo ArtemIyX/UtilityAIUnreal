@@ -58,8 +58,8 @@ public:
      */
     UFUNCTION(BlueprintCallable, BlueprintPure, BlueprintNativeEvent, Category = "AI Consideration",
               meta = (Tooltip = "Returns how desirable this consideration currently is (typically 0..1)"))
-    float GetScore(AActor* Owner, UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext) const;
-    virtual float GetScore_Implementation(AActor* Owner, UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext) const;
+    float GetScore(AActor* Owner, const UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext) const;
+
 	
     /**
      * @brief Returns the unique identifier of this consideration.

@@ -113,10 +113,20 @@ void UUtilityAIComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
+float UUtilityAIComponent::GetConsiderationScoreById(const FName& InId) const
+{
+	if (UUtilityAIConsideration* consideration = GetConsiderationById(InId))
+	{
+		return consideration->GetScore(GetOwner(), this, GetContext());
+	}
+	return 0.0f;
+}
+
 void UUtilityAIComponent::AddProcessor(UUtilityAIProcessor* InNewProcessor)
 {
 	if (InNewProcessor && !Processors.Contains(InNewProcessor))
 	{
+		InNewProcessor->Setup(this);
 		Processors.Add(InNewProcessor);
 		InNewProcessor->InitDefaultStates();
 	}
@@ -139,6 +149,7 @@ UUtilityAIProcessor* UUtilityAIComponent::GetProcessorByType(int32 Type) const
 	return nullptr;
 }
 
+/*
 void UUtilityAIComponent::ExecuteBestForProcessorType(int32 Type)
 {
 	UUtilityAIProcessor* processor = GetProcessorByType(Type);
@@ -152,6 +163,7 @@ void UUtilityAIComponent::ExecuteBestForProcessorType(int32 Type)
 		}
 	}
 }
+*/
 
 UUtilityAIConsideration* UUtilityAIComponent::GetConsiderationById(const FName& InId) const
 {
@@ -160,15 +172,21 @@ UUtilityAIConsideration* UUtilityAIComponent::GetConsiderationById(const FName& 
 		return ConsiderationsMap[InId].Get();
 	}
 	return nullptr;
-
-	/*for (const TObjectPtr<UUtilityAIConsideration>& consideration : Considerations)
+	/*if (GetOwner()->HasAuthority())
 	{
-		if (consideration && consideration->GetId() == InId)
-		{
-			return consideration.Get();
-		}
+		
 	}
-	return nullptr;*/
+	else
+	{
+		for (const TObjectPtr<UUtilityAIConsideration>& consideration : Considerations)
+		{
+			if (consideration && consideration->GetId() == InId)
+			{
+				return consideration.Get();
+			}
+		}
+		return nullptr;
+	}*/
 }
 
 void UUtilityAIComponent::AddConsideration(UUtilityAIConsideration* InNewConsideration)

@@ -27,6 +27,7 @@ void UUtilityAIProcessor::AddState(UUtilityAIState* InNewState)
 {
 	if (InNewState && !States.Contains(InNewState))
 	{
+		InNewState->Setup(FUtilityAIStateRuntimeData(this, GetUtilityAIComponent()));
 		States.Add(InNewState);
 	}
 }
@@ -131,6 +132,11 @@ void UUtilityAIProcessor::BeginDestroy()
 	}
 	States.Empty();
 	UObject::BeginDestroy();
+}
+
+void UUtilityAIProcessor::Setup(UUtilityAIComponent* InOwnerComponent)
+{
+	this->AIComponentPtr = InOwnerComponent;
 }
 
 void UUtilityAIProcessor::InitDefaultStates()

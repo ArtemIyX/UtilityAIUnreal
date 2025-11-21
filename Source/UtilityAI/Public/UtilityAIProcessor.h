@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UtilityAIState.h"
+#include "UtilityAIState.h" // For templated GetStateExactClass<T>
 #include "UObject/Object.h"
 #include "UtilityAIProcessor.generated.h"
 
+class UUtilityAIComponent;
 class UUtilityAIContext;
-class UUtilityAIState;
 
 /**
  * @brief Manages a collection of states and determines the best one to execute
@@ -34,9 +34,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI Processor")
 	TArray<TSubclassOf<UUtilityAIState>> DefaultStates;
 
+protected:
 	/** @brief List of active state instances configured for this processor */
-	UPROPERTY(BlueprintReadOnly, Category = "AI Processor")
+	UPROPERTY(BlueprintReadOnly, Category = "AI Processor|Runtime")
 	TArray<TObjectPtr<UUtilityAIState>> States;
+
+	UPROPERTY(BlueprintReadOnly, Category = "AI Processor|Runtime")
+	TWeakObjectPtr<UUtilityAIComponent> AIComponentPtr;
 
 protected:
 	/**
@@ -49,6 +53,12 @@ protected:
 
 public:
 	virtual void BeginDestroy() override;
+
+	virtual void Setup(UUtilityAIComponent* InOwnerComponent);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="AI Processor|Get")
+	FORCEINLINE UUtilityAIComponent* GetUtilityAIComponent() const { return AIComponentPtr.Get(); }
+
 	/**
 	 * @brief Initializes the default states for the processor
 	 */

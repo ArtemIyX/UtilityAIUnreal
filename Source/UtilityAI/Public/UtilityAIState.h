@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "UtilityAIStateRuntimeData.h"
 #include "UtilityAIState.generated.h"
 
 
+class UUtilityAIProcessor;
 class UUtilityAIComponent;
 class UUtilityAIContext;
+
 /**
  * @class UUtilityAIState
  * @brief Represents a single AI behavior or action
@@ -29,7 +32,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="false"), Category = "AI State")
 	int32 StateType;
 
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "AI State|Runtime")
+	FUtilityAIStateRuntimeData RuntimeData;
+
 public:
+	void Setup(const FUtilityAIStateRuntimeData& InParams);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AI State|GET")
+	FORCEINLINE UUtilityAIProcessor* GetProcessor() const { return RuntimeData.ProcessorPtr.Get(); }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AI State|GET")
+	FORCEINLINE UUtilityAIComponent* GetUtilityAIComponent() const { return RuntimeData.AIComponentPtr.Get(); }
+
 	/**
 	 * @brief Calculates suitability score based on current context
 	 * @param Context Current data context
@@ -39,14 +54,14 @@ public:
 	float GetScore(const UUtilityAIContext* Context) const;
 
 
-	/**
+	/*/**
 	 * @brief Performs the state's behavior
 	 * @param Owner Utility AI Owner (AI Controller)
 	 * @param InSystem Utility AI Actor Component (suboject of AI Controller)
 	 * @param InContext Current data context
-	 */
+	 #1#
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AI State")
-	void Execute(AActor* Owner, UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext);
+	void Execute(AActor* Owner, UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext);*/
 
 	/**
 	 * Retrieves unique identifier for the state

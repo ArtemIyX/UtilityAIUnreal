@@ -3,8 +3,13 @@
 
 #include "UtilityAIState.h"
 
-UUtilityAIState::UUtilityAIState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer), StateType(0)
+UUtilityAIState::UUtilityAIState(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, StateType(0) {}
+
+void UUtilityAIState::Setup(const FUtilityAIStateRuntimeData& InParams)
 {
+	this->RuntimeData = InParams;
 }
 
 
@@ -12,10 +17,3 @@ float UUtilityAIState::GetScore_Implementation(const UUtilityAIContext* Context)
 {
 	return 0.0f;
 }
-
-
-void UUtilityAIState::Execute_Implementation(AActor* Owner, UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext)
-{
-	
-}
-

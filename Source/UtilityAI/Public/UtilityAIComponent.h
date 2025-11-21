@@ -175,6 +175,22 @@ public:
 		return nullptr;
 	}
 
+	template <class T>
+	float GetConsiderationScore() const
+	{
+		for (const TObjectPtr<UUtilityAIConsideration>& el : Considerations)
+		{
+			if (el && el->IsA(T::StaticClass()))
+			{
+				const UUtilityAIComponent* thisPtr = this;
+				return el->GetScore(GetOwner(), thisPtr, GetContext());
+			}
+		}
+		return 0.0f;
+	}
+
+	float GetConsiderationScoreById(const FName& InId) const;
+
 	/**
 	 * @brief Gets the current AI context
 	 * @return Pointer to the current context
@@ -204,12 +220,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Processors")
 	UUtilityAIProcessor* GetProcessorByType(int32 Type) const;
 
-	/**
+	/*/**
 	 * @brief Executes the best action for a specific processor type
 	 * @param Type Type identifier of the processor
-	 */
+	 #1#
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Processors")
-	void ExecuteBestForProcessorType(int32 Type);
+	void ExecuteBestForProcessorType(int32 Type);*/
 
 	/**
 	 * @brief Retrieves a consideration from the list by its unique ID (FName).
