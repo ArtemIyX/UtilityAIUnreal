@@ -220,6 +220,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Processors")
 	UUtilityAIProcessor* GetProcessorByType(int32 Type) const;
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Processors")
+	bool GetBestStateForProcessor(int32 InProcessorType,
+		UUtilityAIState*& OutState,
+		float& OutScore) const;
+	
 	/*/**
 	 * @brief Executes the best action for a specific processor type
 	 * @param Type Type identifier of the processor

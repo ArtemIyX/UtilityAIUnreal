@@ -149,6 +149,25 @@ UUtilityAIProcessor* UUtilityAIComponent::GetProcessorByType(int32 Type) const
 	return nullptr;
 }
 
+bool UUtilityAIComponent::GetBestStateForProcessor(int32 InProcessorType, UUtilityAIState*& OutState, float& OutScore) const
+{
+	OutState = nullptr;
+	OutScore = 0.0f;
+
+	UUtilityAIProcessor* processor = GetProcessorByType(InProcessorType);
+	if (processor == nullptr)
+		return false;
+
+	if (Context == nullptr)
+		return false;
+
+	float bestScore = 0.0f;
+	UUtilityAIState* returnState = processor->GetBestState(Context, bestScore);
+	OutState = returnState;
+	OutScore = bestScore;
+	return IsValid(returnState);
+}
+
 /*
 void UUtilityAIComponent::ExecuteBestForProcessorType(int32 Type)
 {

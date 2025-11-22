@@ -58,7 +58,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="AI Processor|Get")
 	FORCEINLINE UUtilityAIComponent* GetUtilityAIComponent() const { return AIComponentPtr.Get(); }
-
+	
 	/**
 	 * @brief Initializes the default states for the processor
 	 */
