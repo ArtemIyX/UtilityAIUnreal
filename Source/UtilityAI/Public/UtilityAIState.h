@@ -29,7 +29,7 @@ protected:
 	/**
 	 * @brief Unique identifier for the state.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="false"), Category = "AI State")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI State")
 	FGameplayTag Id;
 
 protected:
