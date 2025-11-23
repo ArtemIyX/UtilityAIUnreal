@@ -58,7 +58,7 @@ protected:
 	TArray<TObjectPtr<UUtilityAIConsideration>> Considerations;
 
 	UPROPERTY()
-	TMap<FName, TWeakObjectPtr<UUtilityAIConsideration>> ConsiderationsMap;
+	TMap<FGameplayTag, TWeakObjectPtr<UUtilityAIConsideration>> ConsiderationsMap;
 
 protected:
 	/**
@@ -189,7 +189,7 @@ public:
 		return 0.0f;
 	}
 
-	float GetConsiderationScoreById(const FName& InId) const;
+	float GetConsiderationScoreById(const FGameplayTag& InId) const;
 
 	/**
 	 * @brief Gets the current AI context
@@ -214,14 +214,14 @@ public:
 
 	/**
 	 * @brief Gets a processor by its type
-	 * @param Type Type identifier of the processor
+	 * @param InType Type identifier of the processor
 	 * @return Pointer to the processor, or nullptr if not found
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Processors")
-	UUtilityAIProcessor* GetProcessorByType(int32 Type) const;
+	UUtilityAIProcessor* GetProcessorByType(FGameplayTag InType) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Processors")
-	bool GetBestStateForProcessor(int32 InProcessorType,
+	bool GetBestStateForProcessor(FGameplayTag InProcessorType,
 		UUtilityAIState*& OutState,
 		float& OutScore) const;
 	
@@ -259,7 +259,7 @@ public:
 	 * @see UUtilityAIConsideration::GetId()
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, BlueprintAuthorityOnly, Category = "AI Component|Consideration")
-	UUtilityAIConsideration* GetConsiderationById(const FName& InId) const;
+	UUtilityAIConsideration* GetConsiderationById(const FGameplayTag& InId) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Consideration")
 	void AddConsideration(UUtilityAIConsideration* InNewConsideration);
@@ -268,7 +268,7 @@ public:
 	void RemoveConsideration(UUtilityAIConsideration* InConsiderationToRemove);
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Consideration")
-	void RemoveConsiderationById(const FName& InId);
+	void RemoveConsiderationById(const FGameplayTag& InId);
 
 
 };

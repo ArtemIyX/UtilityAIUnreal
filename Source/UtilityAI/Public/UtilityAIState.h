@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "UObject/Object.h"
 #include "UtilityAIStateRuntimeData.h"
 #include "UtilityAIState.generated.h"
@@ -27,10 +28,9 @@ public:
 protected:
 	/**
 	 * @brief Unique identifier for the state.
-	 * @note Must be set in C++ Constructor
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="false"), Category = "AI State")
-	int32 StateType;
+	FGameplayTag Id;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "AI State|Runtime")
@@ -68,5 +68,5 @@ public:
 	 * @return Unique identifier for the state
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AI State")
-	FORCEINLINE int32 GetStateType() const { return StateType; }
+	FORCEINLINE FGameplayTag GetStateType() const { return Id; }
 };

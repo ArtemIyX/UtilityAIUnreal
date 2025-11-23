@@ -6,8 +6,7 @@
 
 
 UUtilityAIProcessor::UUtilityAIProcessor(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-	, ProcessorType(0) {}
+	: Super(ObjectInitializer) {}
 
 
 void UUtilityAIProcessor::GetCurrentStates(TArray<UUtilityAIState*>& OutStates) const
@@ -83,7 +82,7 @@ void UUtilityAIProcessor::GetScoreMap(const UUtilityAIContext* InContext, TMap<U
 	}
 }
 
-UUtilityAIState* UUtilityAIProcessor::GetStateByType(int32 InType) const
+UUtilityAIState* UUtilityAIProcessor::GetStateByType(FGameplayTag InType) const
 {
 	for (const TObjectPtr<UUtilityAIState>& el : States)
 	{

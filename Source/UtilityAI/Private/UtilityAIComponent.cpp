@@ -113,7 +113,7 @@ void UUtilityAIComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-float UUtilityAIComponent::GetConsiderationScoreById(const FName& InId) const
+float UUtilityAIComponent::GetConsiderationScoreById(const FGameplayTag& InId) const
 {
 	if (UUtilityAIConsideration* consideration = GetConsiderationById(InId))
 	{
@@ -137,11 +137,11 @@ void UUtilityAIComponent::RemoveProcessor(UUtilityAIProcessor* InProcessorToRemo
 	Processors.Remove(InProcessorToRemove);
 }
 
-UUtilityAIProcessor* UUtilityAIComponent::GetProcessorByType(int32 Type) const
+UUtilityAIProcessor* UUtilityAIComponent::GetProcessorByType(FGameplayTag InType) const
 {
 	for (const TObjectPtr<UUtilityAIProcessor>& proc : Processors)
 	{
-		if (proc && proc->GetProcessorType() == Type)
+		if (proc && proc->GetProcessorType() == InType)
 		{
 			return proc.Get();
 		}
@@ -149,7 +149,7 @@ UUtilityAIProcessor* UUtilityAIComponent::GetProcessorByType(int32 Type) const
 	return nullptr;
 }
 
-bool UUtilityAIComponent::GetBestStateForProcessor(int32 InProcessorType, UUtilityAIState*& OutState, float& OutScore) const
+bool UUtilityAIComponent::GetBestStateForProcessor(FGameplayTag InProcessorType, UUtilityAIState*& OutState, float& OutScore) const
 {
 	OutState = nullptr;
 	OutScore = 0.0f;
@@ -184,7 +184,7 @@ void UUtilityAIComponent::ExecuteBestForProcessorType(int32 Type)
 }
 */
 
-UUtilityAIConsideration* UUtilityAIComponent::GetConsiderationById(const FName& InId) const
+UUtilityAIConsideration* UUtilityAIComponent::GetConsiderationById(const FGameplayTag& InId) const
 {
 	if (ConsiderationsMap.Contains(InId))
 	{
@@ -221,7 +221,7 @@ void UUtilityAIComponent::RemoveConsideration(UUtilityAIConsideration* InConside
 {
 	if (InConsiderationToRemove)
 	{
-		const FName id = InConsiderationToRemove->GetId();
+		const FGameplayTag id = InConsiderationToRemove->GetId();
 		if (ConsiderationsMap.Contains(id))
 		{
 			ConsiderationsMap.Remove(id);
@@ -230,7 +230,7 @@ void UUtilityAIComponent::RemoveConsideration(UUtilityAIConsideration* InConside
 	Considerations.Remove(InConsiderationToRemove);
 }
 
-void UUtilityAIComponent::RemoveConsiderationById(const FName& InId)
+void UUtilityAIComponent::RemoveConsiderationById(const FGameplayTag& InId)
 {
 	if (UUtilityAIConsideration* consideration = GetConsiderationById(InId))
 	{

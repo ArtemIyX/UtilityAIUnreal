@@ -25,10 +25,9 @@ public:
 protected:
 	/**
 	 * @brief Type identifier for the processor
-	 * @note Must be set in C++
 	 */
-	UPROPERTY(BlueprintReadOnly, Category = "AI Processor")
-	int32 ProcessorType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI Processor")
+	FGameplayTag Id;
 
 	/** @brief Array of default state classes */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI Processor")
@@ -58,7 +57,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="AI Processor|Get")
 	FORCEINLINE UUtilityAIComponent* GetUtilityAIComponent() const { return AIComponentPtr.Get(); }
-	
+
 	/**
 	 * @brief Initializes the default states for the processor
 	 */
@@ -77,7 +76,7 @@ public:
 	 * @return The processor type identifier
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="AI Processor")
-	FORCEINLINE int32 GetProcessorType() const { return ProcessorType; }
+	FORCEINLINE FGameplayTag GetProcessorType() const { return Id; }
 
 	/**
 	 * @brief Adds a state to the processor
@@ -112,7 +111,7 @@ public:
 	 * @return Pointer to the state, or nullptr if not found
 	 */
 	UFUNCTION(BlueprintCallable, Category = "AI Processor")
-	UUtilityAIState* GetStateByType(int32 InType) const;
+	UUtilityAIState* GetStateByType(FGameplayTag InType) const;
 
 	/**
 	 * @brief Retrieves a state of type T from the collection of states.
@@ -143,16 +142,15 @@ public:
 	 * whose state type matches the provided InType value. If no matching state is found, it returns nullptr.
 	 * 
 	 * @tparam T The type of the state to retrieve, expected to be a subclass of UUtilityAIState.
-	 * @tparam E The type of the state identifier (e.g., an enum or integer type).
 	 * @param InType The state type identifier to match against.
 	 * @return T* A pointer to the state of type T with the matching state type, or nullptr if no matching state is found.
 	 */
-	template <typename T, typename E>
-	T* GetState(E InType) const
+	template <typename T>
+	T* GetState(FGameplayTag InType) const
 	{
 		for (const TObjectPtr<UUtilityAIState>& el : States)
 		{
-			if (el->GetStateType() == static_cast<int32>(InType))
+			if (el->GetStateType() == InType)
 			{
 				return Cast<T>(el.Get());
 			}

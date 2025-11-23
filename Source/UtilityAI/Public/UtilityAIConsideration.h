@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "UObject/Object.h"
 #include "UtilityAIConsideration.generated.h"
 
@@ -39,7 +40,7 @@ public:
      * Visible and editable in blueprints and the editor (Defaults only).
      */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI Consideration")
-    FName Id;
+    FGameplayTag Id;
 
     /**
      * @brief Calculates and returns the raw score for this consideration.
@@ -66,5 +67,5 @@ public:
      * @return The Id set in the details panel or defaults.
      */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AI Consideration")
-    FORCEINLINE FName GetId() const { return Id; }
+    FORCEINLINE FGameplayTag GetId() const { return Id; }
 };

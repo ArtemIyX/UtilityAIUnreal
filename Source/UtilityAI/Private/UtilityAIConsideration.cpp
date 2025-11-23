@@ -4,10 +4,7 @@
 #include "UtilityAIConsideration.h"
 
 UUtilityAIConsideration::UUtilityAIConsideration(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-	Id = NAME_None;
-}
+	: Super(ObjectInitializer) {}
 
 float UUtilityAIConsideration::GetScore_Implementation(AActor* Owner, const UUtilityAIComponent* InSystem, const UUtilityAIContext* InContext) const
 {

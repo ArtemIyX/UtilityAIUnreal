@@ -4,8 +4,7 @@
 #include "UtilityAIState.h"
 
 UUtilityAIState::UUtilityAIState(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-	, StateType(0) {}
+	: Super(ObjectInitializer) {}
 
 void UUtilityAIState::Setup(const FUtilityAIStateRuntimeData& InParams)
 {
