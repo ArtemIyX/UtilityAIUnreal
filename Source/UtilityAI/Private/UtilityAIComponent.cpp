@@ -213,9 +213,14 @@ void UUtilityAIComponent::AddConsideration(UUtilityAIConsideration* InNewConside
 {
 	if (InNewConsideration && !Considerations.Contains(InNewConsideration))
 	{
+		// Add to storage
 		Considerations.Add(InNewConsideration);
 		ConsiderationsMap.Add(InNewConsideration->GetId(), InNewConsideration);
+
+		// Add params
 		InNewConsideration->InitDefaultParams();
+
+		// Set custom values
 		for (TPair<FConsiderationParamKey, FConsiderationParamValue> pair : InParams)
 		{
 			InNewConsideration->SetParam(pair.Key.Key, pair.Value);
