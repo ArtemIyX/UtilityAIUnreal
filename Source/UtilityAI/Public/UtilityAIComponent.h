@@ -12,6 +12,21 @@
 class UUtilityAIContextCollector;
 class UUtilityAIContext;
 
+USTRUCT(Blueprintable, BlueprintType)
+struct UTILITYAI_API FConsiderationSetup
+{
+	GENERATED_BODY()
+
+public:
+	FConsiderationSetup() {}
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUtilityAIConsideration> ConsiderationClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FConsiderationParamKey, FConsiderationParamValue> DefaultParamValues;
+};
+
 /**
  * @brief Actor component that orchestrates the Utility AI system
  */
@@ -39,7 +54,7 @@ protected:
 
 	/** @brief Array of default Consideration classes */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI Component")
-	TArray<TSubclassOf<UUtilityAIConsideration>> DefaultConsiderations;
+	TArray<FConsiderationSetup> DefaultConsiderations;
 
 	/** @brief Shared context filled on tick */
 	UPROPERTY(BlueprintReadOnly, Category = "AI Component")
@@ -262,7 +277,7 @@ public:
 	UUtilityAIConsideration* GetConsiderationById(const FGameplayTag& InId) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Consideration")
-	void AddConsideration(UUtilityAIConsideration* InNewConsideration);
+	void AddConsideration(UUtilityAIConsideration* InNewConsideration, TMap<FConsiderationParamKey, FConsiderationParamValue>& InParams);
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "AI Component|Consideration")
 	void RemoveConsideration(UUtilityAIConsideration* InConsiderationToRemove);

@@ -46,12 +46,12 @@ void UUtilityAIComponent::BeginPlay()
 		}
 
 		// Initialize considerations
-		for (TSubclassOf<UUtilityAIConsideration> el : DefaultConsiderations)
+		for (FConsiderationSetup& el : DefaultConsiderations)
 		{
-			if (el)
+			if (el.ConsiderationClass)
 			{
-				UUtilityAIConsideration* consObject = NewObject<UUtilityAIConsideration>(this, el);
-				AddConsideration(consObject);
+				UUtilityAIConsideration* consObject = NewObject<UUtilityAIConsideration>(this, el.ConsiderationClass);
+				AddConsideration(consObject, el.DefaultParamValues);
 			}
 		}
 	}
@@ -208,12 +208,18 @@ UUtilityAIConsideration* UUtilityAIComponent::GetConsiderationById(const FGamepl
 	}*/
 }
 
-void UUtilityAIComponent::AddConsideration(UUtilityAIConsideration* InNewConsideration)
+void UUtilityAIComponent::AddConsideration(UUtilityAIConsideration* InNewConsideration,
+	TMap<FConsiderationParamKey, FConsiderationParamValue>& InParams)
 {
 	if (InNewConsideration && !Considerations.Contains(InNewConsideration))
 	{
 		Considerations.Add(InNewConsideration);
 		ConsiderationsMap.Add(InNewConsideration->GetId(), InNewConsideration);
+		InNewConsideration->InitDefaultParams();
+		for (TPair<FConsiderationParamKey, FConsiderationParamValue> pair : InParams)
+		{
+			InNewConsideration->SetParam(pair.Key.Key, pair.Value);
+		}
 	}
 }
 
