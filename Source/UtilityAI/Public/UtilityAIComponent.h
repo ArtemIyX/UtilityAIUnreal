@@ -30,7 +30,7 @@ public:
 /**
  * @brief Actor component that orchestrates the Utility AI system
  */
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType)
 class UTILITYAI_API UUtilityAIComponent : public UActorComponent
 {
 	GENERATED_BODY()

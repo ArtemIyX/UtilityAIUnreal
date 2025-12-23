@@ -35,8 +35,8 @@ void FUtilityAIEditorModule::ShutdownModule()
 			FSlateStyleRegistry::UnRegisterSlateStyle(*StyleSet.Get());
 			StyleSet.Reset();
 		}
+		UThumbnailManager::Get().UnregisterCustomRenderer(UUtilityAIConvertObjectBase::StaticClass());
 	}
-	UThumbnailManager::Get().UnregisterCustomRenderer(UUtilityAIConvertObjectBase::StaticClass());
 }
 
 TSharedRef<FSlateStyleSet> FUtilityAIEditorModule::Create()
@@ -49,16 +49,36 @@ TSharedRef<FSlateStyleSet> FUtilityAIEditorModule::Create()
 	style->SetContentRoot(contentDir);
 
 	// Define the thumbnail brush (128x128 size)
-	const FVector2D Icon128(128.0f, 128.0f);
-	style->Set("ClassThumbnail.UtilityAIConsideration",
-		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIConsideration128.png")), Icon128));
+	const FVector2D icon16(16.0f, 16.0f);
 
-	style->Set("ClassThumbnail.UtilityAIConsideration.Background", FLinearColor(0.1f, 0.5f, 0.8f, 1.0f));
+	const FVector2D icon32(32.0f, 32.0f);
 
 	// Smaller icon for lists/context menus (16x16)
-	const FVector2D Icon16(16.0f, 16.0f);
+	const FVector2D icon128(128.0f, 128.0f);
+
+	style->Set("ClassThumbnail.UtilityAIConsideration",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIConsideration128.png")), icon128));
+
 	style->Set("ClassIcon.UtilityAIConsideration",
-		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIConsideration16.png")), Icon16));
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIConsideration16.png")), icon16));
+
+	style->Set("ClassThumbnail.UtilityAIState",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIState128.png")), icon128));
+
+	style->Set("ClassIcon.UtilityAIState",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIState16.png")), icon16));
+
+	style->Set("ClassThumbnail.UtilityAIProcessor",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIProcessor128.png")), icon128));
+
+	style->Set("ClassIcon.UtilityAIProcessor",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIProcessor16.png")), icon16));
+
+	style->Set("ClassThumbnail.UtilityAIComponent",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIComponent128.png")), icon128));
+
+	style->Set("ClassIcon.UtilityAIComponent",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIComponent32.png")), icon32));
 
 	return style;
 }

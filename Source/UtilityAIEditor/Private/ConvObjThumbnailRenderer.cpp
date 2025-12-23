@@ -78,19 +78,6 @@ void UConvObjThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 W
 		{
 			Canvas->Clear(FLinearColor::Black);
 		}
-
-		/*const FRichCurve* richCurve = convObj->Curve.GetRichCurveConst();
-		if (!richCurve)
-			return;
-
-		if (richCurve->GetNumKeys() < 2)
-		{
-			FCanvasLineItem Line(FVector2D(0, textureSize.Y / 2), FVector2D(textureSize.X, textureSize.Y / 2));
-			Line.LineThickness = 1.5;
-			Line.SetColor(FLinearColor::Gray);
-			Line.Draw(Canvas);
-			return;
-		}*/
 		
 		DrawCurve(convObj, Canvas, FLinearColor::Gray, 0.0f, 1.0f, 0.0f, 1.0f);
 	}
