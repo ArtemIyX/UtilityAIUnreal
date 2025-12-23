@@ -21,7 +21,9 @@ public class UtilityAIEditor : ModuleRules
                 "CoreUObject",
                 "Engine",
                 "Slate",
-                "SlateCore"
+                "SlateCore",
+                "Projects",
+                "UMG"
             }
         );
     }
