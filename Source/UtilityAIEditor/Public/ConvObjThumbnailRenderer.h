@@ -6,6 +6,7 @@
 #include "ThumbnailRendering/ThumbnailRenderer.h"
 #include "ConvObjThumbnailRenderer.generated.h"
 
+class UUtilityAIConvertObjectBase;
 /**
  * 
  */
@@ -17,7 +18,7 @@ class UTILITYAIEDITOR_API UConvObjThumbnailRenderer : public UThumbnailRenderer
 public:
 	virtual bool CanVisualizeAsset(UObject* Object) override;
 	virtual void GetThumbnailSize(UObject* Object, float Zoom, uint32& OutWidth, uint32& OutHeight) const override;
-	void DrawCurve(const FRichCurve& Curve, FCanvas* Canvas, const FLinearColor& Color, float MinTime, float MaxTime,
+	void DrawCurve(UUtilityAIConvertObjectBase* InConvertObject, FCanvas* Canvas, const FLinearColor& Color, float MinTime, float MaxTime,
 		float MinValue, float MaxValue);
 	virtual void Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget* Viewport, FCanvas* Canvas, bool bAdditionalViewFamily) override;
 

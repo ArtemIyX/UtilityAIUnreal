@@ -8,13 +8,20 @@
 
 void FUtilityAIEditorModule::StartupModule()
 {
-	UThumbnailManager::Get().RegisterCustomRenderer(UUtilityAIConvertObject::StaticClass(),
-		UConvObjThumbnailRenderer::StaticClass());
+	if (GEditor)
+	{
+		UThumbnailManager::Get().RegisterCustomRenderer(UUtilityAIConvertObjectBase::StaticClass(),
+			UConvObjThumbnailRenderer::StaticClass());
+	}
 }
 
 void FUtilityAIEditorModule::ShutdownModule()
 {
-	UThumbnailManager::Get().UnregisterCustomRenderer(UUtilityAIConvertObject::StaticClass());
+	if (GEditor && FSlateApplication::IsInitialized())
+	{
+		UThumbnailManager::Get().UnregisterCustomRenderer(UUtilityAIConvertObjectBase::StaticClass());
+	}
+	
 }
 
 

@@ -3,21 +3,18 @@
 
 #include "UtilityAIConvertObject.h"
 
+UUtilityAIConvertObjectBase::UUtilityAIConvertObjectBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	
+}
+
 /**
  * Default implementation samples the Curve property.
  * InAlpha is automatically clamped to [0.0, 1.0].
  */
-float UUtilityAIConvertObject::Evaluate_Implementation(float InAlpha) const
+float UUtilityAIConvertObjectBase::Evaluate_Implementation(float InAlpha) const
 {
-	float clamped = FMath::Clamp(InAlpha, 0.0f, 1.0f);
-	return Curve.GetRichCurveConst()->Eval(clamped);
+	return 1.0f - InAlpha;
 }
 
-UUtilityAIConvertObject::UUtilityAIConvertObject(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-	FRichCurve* RichCurve = Curve.GetRichCurve(); // Non-const reference for editing
-
-	RichCurve->AddKey(0.0f, 0.0f);
-	RichCurve->AddKey(1.0f, 1.0f);
-}

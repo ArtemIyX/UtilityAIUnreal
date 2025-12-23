@@ -10,7 +10,7 @@
 bool UConvObjThumbnailRenderer::CanVisualizeAsset(UObject* Object)
 {
 	// Try to cast the object to the UUtilityAIConvertObject
-	if (UUtilityAIConvertObject* convObject = Cast<UUtilityAIConvertObject>(Object))
+	if (UUtilityAIConvertObjectBase* convObject = Cast<UUtilityAIConvertObjectBase>(Object))
 	{
 		return true;
 	}
@@ -23,7 +23,7 @@ void UConvObjThumbnailRenderer::GetThumbnailSize(UObject* Object, float Zoom, ui
 	OutHeight = 255;
 }
 
-void UConvObjThumbnailRenderer::DrawCurve(const FRichCurve& Curve, FCanvas* Canvas, const FLinearColor& Color, float MinTime, float MaxTime, float MinValue, float MaxValue)
+void UConvObjThumbnailRenderer::DrawCurve(UUtilityAIConvertObjectBase* InConvertObject, FCanvas* Canvas, const FLinearColor& Color, float MinTime, float MaxTime, float MinValue, float MaxValue)
 {
 	FVector2D textureSize = Canvas->GetRenderTarget()->GetSizeXY();
 	if (textureSize.X == 0 || textureSize.Y == 0)
@@ -52,7 +52,7 @@ void UConvObjThumbnailRenderer::DrawCurve(const FRichCurve& Curve, FCanvas* Canv
 			time = TimeRange == 0 ? 0 : (i - Padding / 2) / TimeRange + MinTime;
 		}
 
-		const float value = Curve.Eval(time);
+		const float value = InConvertObject->Evaluate(time);
 		FVector2D Pos;
 		Pos.X = i * textureSize.X / samples;
 		const float normalizedValue = 1 - (value - MinValue) / (MaxValue - MinValue);
@@ -71,15 +71,15 @@ void UConvObjThumbnailRenderer::DrawCurve(const FRichCurve& Curve, FCanvas* Canv
 
 void UConvObjThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 Width, uint32 Height, FRenderTarget* Viewport, FCanvas* Canvas, bool bAdditionalViewFamily)
 {
-	if (UUtilityAIConvertObject* convObj = Cast<UUtilityAIConvertObject>(Object))
+	if (UUtilityAIConvertObjectBase* convObj = Cast<UUtilityAIConvertObjectBase>(Object))
 	{
-		const FVector2D textureSize = Canvas->GetRenderTarget()->GetSizeXY();
+		//const FVector2D textureSize = Canvas->GetRenderTarget()->GetSizeXY();
 		if (!bAdditionalViewFamily)
 		{
 			Canvas->Clear(FLinearColor::Black);
 		}
 
-		const FRichCurve* richCurve = convObj->Curve.GetRichCurveConst();
+		/*const FRichCurve* richCurve = convObj->Curve.GetRichCurveConst();
 		if (!richCurve)
 			return;
 
@@ -90,13 +90,8 @@ void UConvObjThumbnailRenderer::Draw(UObject* Object, int32 X, int32 Y, uint32 W
 			Line.SetColor(FLinearColor::Gray);
 			Line.Draw(Canvas);
 			return;
-		}
-
-		float MinTime, MaxTime;
-		richCurve->GetTimeRange(MinTime, MaxTime);
-
-		float MinValue, MaxValue;
-		richCurve->GetValueRange(MinValue, MaxValue);
-		DrawCurve(*richCurve, Canvas, FLinearColor::Gray, MinTime, MaxTime, MinValue, MaxValue);
+		}*/
+		
+		DrawCurve(convObj, Canvas, FLinearColor::Gray, 0.0f, 1.0f, 0.0f, 1.0f);
 	}
 }

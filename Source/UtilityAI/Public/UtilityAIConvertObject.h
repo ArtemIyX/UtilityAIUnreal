@@ -7,7 +7,7 @@
 #include "UtilityAIConvertObject.generated.h"
 
 /**
- * @class UUtilityAIConvertObject
+ * @class UUtilityAIConvertObjectBase
  * @brief Base class for converting a normalized input value (0.0 to 1.0) to an output value using a customizable response curve.
  *
  * This class serves as a foundation for utility AI conversion objects that remap a float value in the range [0.0, 1.0]
@@ -24,7 +24,7 @@
  * @see FRuntimeFloatCurve
  */
 UCLASS(BlueprintType, Blueprintable)
-class UTILITYAI_API UUtilityAIConvertObject : public UObject
+class UTILITYAI_API UUtilityAIConvertObjectBase : public UObject
 {
 	GENERATED_BODY()
 
@@ -33,29 +33,7 @@ public:
 	 * @brief Default constructor.
 	 * @param ObjectInitializer The object initializer (defaults to the global one).
 	 */
-	UUtilityAIConvertObject(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
-
-public:
-	/**
-	 * @brief The runtime curve used to remap the input alpha value.
-	 *
-	 * This curve maps input values from 0.0 to 1.0 on the X-axis to output values on the Y-axis.
-	 * It can be edited in the Details panel of derived Blueprint classes or asset instances.
-	 * Common curves include:
-	 * - Linear (default identity mapping)
-	 * - Ease In / Ease Out
-	 * - Sinusoidal
-	 * - Cubic / Quadratic
-	 * - Custom hand-tuned curves
-	 *
-	 * @note Visible only in defaults to prevent accidental runtime modification.
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
-	FRuntimeFloatCurve Curve;
-
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Settings")
-	TSoftObjectPtr<UTexture2D> DisplayIcon;*/
+	UUtilityAIConvertObjectBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
 	
