@@ -10,6 +10,7 @@
 #include "UtilityAIProcessor.h"
 #include "UtilityAIState.h"
 #include "UtilityAIConvertObjectBase.h"
+#include "UtilityAIStateWeighted.h"
 #include "UtilityAIFactories.generated.h"
 
 namespace UtilityAI
@@ -20,6 +21,7 @@ namespace UtilityAI
 		inline TSubclassOf<UObject> ContextCollector = UUtilityAIContextCollector::StaticClass();
 		inline TSubclassOf<UObject> Processor = UUtilityAIProcessor::StaticClass();
 		inline TSubclassOf<UObject> State = UUtilityAIState::StaticClass();
+		inline TSubclassOf<UObject> StateWeighted = UUtilityAIStateWeighted::StaticClass();
 		inline TSubclassOf<UObject> Consideration = UUtilityAIConsideration::StaticClass();
 		inline TSubclassOf<UObject> Converter = UUtilityAIConvertObjectBase::StaticClass();
 	}
@@ -127,6 +129,32 @@ public:
 	{
 		SupportedClass = UtilityAI::Classes::State;
 		Name = FText::FromString("Processor State");
+	}
+};
+
+// State Weighted ---------------------------------------------------------------------
+
+UCLASS()
+class UTILITYAIEDITOR_API UProcessorStateWeightedFactory : public UUtilityAIAssetFactory
+{
+	GENERATED_BODY()
+
+public:
+	UProcessorStateWeightedFactory(const FObjectInitializer& ObjectInitializer)
+		: Super(ObjectInitializer)
+	{
+		SupportedClass = UtilityAI::Classes::StateWeighted;
+		TargetObjectClass = UtilityAI::Classes::StateWeighted;
+	}
+};
+
+class FAssetTypeActions_ProcessorStateWeighted : public FAssetTypeActions_UtilityAI
+{
+public:
+	FAssetTypeActions_ProcessorStateWeighted()
+	{
+		SupportedClass = UtilityAI::Classes::StateWeighted;
+		Name = FText::FromString("Processor State (Weighted)");
 	}
 };
 

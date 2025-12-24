@@ -33,6 +33,7 @@ void FUtilityAIEditorModule::StartupModule()
 		RegisterAssetActions<FAssetTypeActions_ContextCollector>(assetTools);
 		RegisterAssetActions<FAssetTypeActions_Processor>(assetTools);
 		RegisterAssetActions<FAssetTypeActions_ProcessorState>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_ProcessorStateWeighted>(assetTools);
 		RegisterAssetActions<FAssetTypeActions_ProcessorConsideration>(assetTools);
 		RegisterAssetActions<FAssetTypeActions_Converter>(assetTools);
 	}
