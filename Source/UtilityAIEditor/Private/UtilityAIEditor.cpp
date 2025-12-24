@@ -1,10 +1,8 @@
 ﻿#include "UtilityAIEditor.h"
 
-#include "AssetDefinitionRegistry.h"
 #include "AssetToolsModule.h"
-#include "UtilityAIConvertObject.h"
-#include "Factory/AssetTypeActions_UtilityAI.h"
-#include "Factory/StateFactory.h"
+#include "UtilityAIConvertObjectBase.h"
+#include "Factory/UtilityAIFactories.h"
 
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
@@ -31,7 +29,12 @@ void FUtilityAIEditorModule::StartupModule()
 
 		IAssetTools& assetTools = IAssetTools::Get();
 		assetTools.RegisterAdvancedAssetCategory(FName(TEXT("UtilityAI")), FText::FromString(TEXT("Utility AI")));
-		RegisterAssetActions<FAssetTypeActions_State>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_Context>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_ContextCollector>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_Processor>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_ProcessorState>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_ProcessorConsideration>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_Converter>(assetTools);
 	}
 }
 

@@ -5,7 +5,7 @@
 
 #include "CanvasItem.h"
 #include "CanvasTypes.h"
-#include "UtilityAIConvertObject.h"
+#include "UtilityAIConvertObjectBase.h"
 
 bool UConvObjThumbnailRenderer::CanVisualizeAsset(UObject* Object)
 {
