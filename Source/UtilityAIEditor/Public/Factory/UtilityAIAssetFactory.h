@@ -39,7 +39,7 @@ class UTILITYAIEDITOR_API UUtilityAIAssetFactory : public UFactory
 public:
 	UUtilityAIAssetFactory(const FObjectInitializer& ObjectInitializer);
 
-private:
+protected:
 	TSubclassOf<UObject> SelectedByUserClass;
 
 protected:

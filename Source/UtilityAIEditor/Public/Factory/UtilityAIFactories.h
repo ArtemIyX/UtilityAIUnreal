@@ -146,6 +146,9 @@ public:
 		SupportedClass = UtilityAI::Classes::StateWeighted;
 		TargetObjectClass = UtilityAI::Classes::StateWeighted;
 	}
+
+public:
+	virtual UObject* FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn, FName CallingContext) override;
 };
 
 class FAssetTypeActions_ProcessorStateWeighted : public FAssetTypeActions_UtilityAI
@@ -156,7 +159,11 @@ public:
 		SupportedClass = UtilityAI::Classes::StateWeighted;
 		Name = FText::FromString("Processor State (Weighted)");
 	}
+
+public:
+	virtual void OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor = TSharedPtr<IToolkitHost>()) override;
 };
+
 
 // Consideration ---------------------------------------------------------------------
 
