@@ -1,6 +1,10 @@
 ﻿#include "UtilityAIEditor.h"
 
+#include "AssetDefinitionRegistry.h"
+#include "AssetToolsModule.h"
 #include "UtilityAIConvertObject.h"
+#include "Factory/StateAssetActions.h"
+
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Thumbnail/ConvObjThumbnailRenderer.h"
@@ -23,6 +27,12 @@ void FUtilityAIEditorModule::StartupModule()
 
 		UThumbnailManager::Get().RegisterCustomRenderer(UUtilityAIConvertObjectBase::StaticClass(),
 			UConvObjThumbnailRenderer::StaticClass());
+
+		IAssetTools& assetTools = IAssetTools::Get();
+		assetTools.RegisterAdvancedAssetCategory(FName(TEXT("UtilityAI")), FText::FromString(TEXT("Utility AI")));
+		TSharedPtr<FStateAssetActions> stateActions = MakeShareable(new FStateAssetActions());
+		assetTools.RegisterAssetTypeActions(stateActions.ToSharedRef());
+
 	}
 }
 
@@ -37,6 +47,7 @@ void FUtilityAIEditorModule::ShutdownModule()
 		}
 		UThumbnailManager::Get().UnregisterCustomRenderer(UUtilityAIConvertObjectBase::StaticClass());
 	}
+
 }
 
 TSharedRef<FSlateStyleSet> FUtilityAIEditorModule::Create()
