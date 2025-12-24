@@ -1,9 +1,9 @@
 ﻿#include "UtilityAIEditor.h"
 
-#include "ConvObjThumbnailRenderer.h"
 #include "UtilityAIConvertObject.h"
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
+#include "Thumbnail/ConvObjThumbnailRenderer.h"
 #include "ThumbnailRendering/ThumbnailManager.h"
 
 #define LOCTEXT_NAMESPACE "FUtilityAIEditorModule"
@@ -79,6 +79,21 @@ TSharedRef<FSlateStyleSet> FUtilityAIEditorModule::Create()
 
 	style->Set("ClassIcon.UtilityAIComponent",
 		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIComponent32.png")), icon32));
+
+	style->Set("ClassThumbnail.UtilityAIContextCollector",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContextCollector128.png")), icon128));
+
+	style->Set("ClassIcon.UtilityAIContextCollector",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContextCollector16.png")), icon16));
+
+	style->Set("ClassThumbnail.UtilityAIContext",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContext16.png")), icon128));
+
+	style->Set("ClassIcon.UtilityAIContext",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContext128.png")), icon16));
+
+	style->Set("ClassIcon.UtilityAIConvertObjectBase",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIConvertObject16.png")), icon16));
 
 	return style;
 }
