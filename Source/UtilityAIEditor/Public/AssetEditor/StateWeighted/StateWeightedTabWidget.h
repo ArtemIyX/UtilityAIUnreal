@@ -28,4 +28,12 @@ public:
 
 private:
 	TSharedPtr<SWidget> BaseScoreWidget;
+
+	TSharedPtr<SListView<TSharedPtr<int32>>> SumListWidget;
+	TArray<TSharedPtr<int32>> SumItems;
+    
+	void RefreshSumList();
+	TSharedRef<ITableRow> OnGenerateRowForList(TSharedPtr<int32> Item, const TSharedRef<STableViewBase>& OwnerTable);
+	FReply OnAddItem();
+	FReply OnRemoveItem(int32 Index);
 };
