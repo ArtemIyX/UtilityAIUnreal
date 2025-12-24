@@ -30,7 +30,7 @@ bool UUtilityAIConsideration::SetParam(FGameplayTag InKey, const FConsiderationP
 	const FConsiderationParamKey paramKey(InKey);
 	if (!RuntimeParams.Contains(paramKey))
 	{
-		return false;
+		return AddParam(paramKey, InValue);
 	}
 	RuntimeParams[paramKey] = InValue;
 	return true;

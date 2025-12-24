@@ -48,7 +48,7 @@ public:
 	/**
 	 * @brief Calculates suitability score based on current context
 	 * @param Context Current data context
-	 * @return Evaluated Score [0.0 - 1.0]
+	 * @return Evaluated Score
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "AI State")
 	float GetScore(const UUtilityAIContext* Context) const;

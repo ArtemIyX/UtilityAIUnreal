@@ -23,7 +23,7 @@
  *
  * @see FRuntimeFloatCurve
  */
-UCLASS(BlueprintType, Blueprintable)
+UCLASS(BlueprintType, Blueprintable, DefaultToInstanced, EditInlineNew)
 class UTILITYAI_API UUtilityAIConvertObjectBase : public UObject
 {
 	GENERATED_BODY()
