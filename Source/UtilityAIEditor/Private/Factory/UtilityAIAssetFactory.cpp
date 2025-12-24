@@ -1,7 +1,7 @@
 ﻿// © Artem Podorozhko. All Rights Reserved. This project, including all associated assets, code, and content, is the property of Artem Podorozhko. Unauthorized use, distribution, or modification is strictly prohibited.
 
 
-#include "Factory/StateAssetFactory.h"
+#include "Factory/UtilityAIAssetFactory.h"
 
 #include "ClassViewerFilter.h"
 #include "ClassViewerModule.h"
@@ -10,24 +10,20 @@
 #include "Kismet2/SClassPickerDialog.h"
 
 
-UStateAssetFactory::UStateAssetFactory(const FObjectInitializer& ObjectInitializer)
+UUtilityAIAssetFactory::UUtilityAIAssetFactory(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	SupportedClass = UUtilityAIState::StaticClass();
-	TargetObjectClass = UUtilityAIState::StaticClass();
+	SupportedClass = UObject::StaticClass();
+	TargetObjectClass = UObject::StaticClass();
 }
 
-void UStateAssetFactory::OnClassPicked(UClass* InClass)
-{
-	SelectedByUserClass = InClass;
-}
-
-bool UStateAssetFactory::ConfigureProperties()
+bool UUtilityAIAssetFactory::ConfigureProperties()
 {
 	//FClassViewerModule& ClassViewerModule = FModuleManager::LoadModuleChecked<FClassViewerModule>("ClassViewer");
 
 	FClassViewerInitializationOptions pickOptions;
 	pickOptions.Mode = EClassViewerMode::ClassPicker;
+	pickOptions.DisplayMode = EClassViewerDisplayMode::TreeView; 
 	pickOptions.bShowNoneOption = false;
 	pickOptions.bExpandRootNodes = true;
 
@@ -54,16 +50,16 @@ bool UStateAssetFactory::ConfigureProperties()
 	return bSelected;
 }
 
-UObject* UStateAssetFactory::FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn, FName CallingContext)
+UObject* UUtilityAIAssetFactory::FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn, FName CallingContext)
 {
-	UBlueprint* blueprintObject = FKismetEditorUtilities::CreateBlueprint(TargetObjectClass, InParent, InName, BPTYPE_Normal,
+	UBlueprint* blueprintObject = FKismetEditorUtilities::CreateBlueprint(SelectedByUserClass, InParent, InName, BPTYPE_Normal,
 		UBlueprint::StaticClass(),
 		UBlueprintGeneratedClass::StaticClass(), CallingContext);
 	return blueprintObject;
 
 }
 
-bool UStateAssetFactory::CanCreateNew() const
+bool UUtilityAIAssetFactory::CanCreateNew() const
 {
 	return true;
 }

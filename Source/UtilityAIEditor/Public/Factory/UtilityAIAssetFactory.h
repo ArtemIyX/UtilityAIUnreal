@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ClassViewerFilter.h"
-#include "ActorFactories/ActorFactory.h"
-#include "Factories/BlueprintFactory.h"
-#include "StateAssetFactory.generated.h"
+#include "UtilityAIAssetFactory.generated.h"
 
 class FUtilityAiClassViewFilter : public IClassViewerFilter
 {
@@ -34,22 +32,22 @@ public:
  * 
  */
 UCLASS()
-class UTILITYAIEDITOR_API UStateAssetFactory : public UFactory
+class UTILITYAIEDITOR_API UUtilityAIAssetFactory : public UFactory
 {
 	GENERATED_BODY()
 
 public:
-	UStateAssetFactory(const FObjectInitializer& ObjectInitializer);
+	UUtilityAIAssetFactory(const FObjectInitializer& ObjectInitializer);
 
-protected:
-	UPROPERTY()
-	TSubclassOf<UObject> TargetObjectClass;
-
-	UPROPERTY()
+private:
 	TSubclassOf<UObject> SelectedByUserClass;
 
 protected:
-	void OnClassPicked(UClass* InClass);
+	
+	/**
+	 * Change this class, it will be used in factory
+	 */
+	TSubclassOf<UObject> TargetObjectClass;
 
 public:
 	virtual bool ConfigureProperties() override;

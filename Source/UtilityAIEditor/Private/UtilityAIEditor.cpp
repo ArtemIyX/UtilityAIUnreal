@@ -3,7 +3,8 @@
 #include "AssetDefinitionRegistry.h"
 #include "AssetToolsModule.h"
 #include "UtilityAIConvertObject.h"
-#include "Factory/StateAssetActions.h"
+#include "Factory/AssetTypeActions_UtilityAI.h"
+#include "Factory/StateFactory.h"
 
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
@@ -30,9 +31,7 @@ void FUtilityAIEditorModule::StartupModule()
 
 		IAssetTools& assetTools = IAssetTools::Get();
 		assetTools.RegisterAdvancedAssetCategory(FName(TEXT("UtilityAI")), FText::FromString(TEXT("Utility AI")));
-		TSharedPtr<FStateAssetActions> stateActions = MakeShareable(new FStateAssetActions());
-		assetTools.RegisterAssetTypeActions(stateActions.ToSharedRef());
-
+		RegisterAssetActions<FAssetTypeActions_State>(assetTools);
 	}
 }
 
@@ -46,8 +45,20 @@ void FUtilityAIEditorModule::ShutdownModule()
 			StyleSet.Reset();
 		}
 		UThumbnailManager::Get().UnregisterCustomRenderer(UUtilityAIConvertObjectBase::StaticClass());
+		
 	}
 
+}
+
+void FUtilityAIEditorModule::UnregisterAssetActions()
+{
+	IAssetTools& assetTools = IAssetTools::Get();
+	const int32 n = AssetActions.Num();
+	for (int32 i = 0; i < n; ++i)
+	{
+		assetTools.UnregisterAssetTypeActions(AssetActions[i].ToSharedRef());
+	}
+	AssetActions.Empty();
 }
 
 TSharedRef<FSlateStyleSet> FUtilityAIEditorModule::Create()
