@@ -10,6 +10,9 @@ class UUtilityAIStateWeighted;
 
 class FStateWeightedAssetEditorApp : public FWorkflowCentricApplication, public FEditorUndoClient, public FNotifyHook
 {
+protected:
+	TWeakObjectPtr<UUtilityAIStateWeighted> WorkingAsset = nullptr;
+
 public:
 	virtual void RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager) override;
 	void InitEditor(const EToolkitMode::Type Mode, const TSharedPtr<class IToolkitHost> InitToolkitHost, UObject* InObject);
@@ -21,10 +24,11 @@ public:
 	virtual FString GetWorldCentricTabPrefix() const override { return TEXT("StateWeightedAssetEditorApp"); } // Dont care
 	virtual FLinearColor GetWorldCentricTabColorScale() const override { return FLinearColor(0.3f, 0.2f, 0.15f, 0.5f); }
 	virtual FString GetDocumentationLink() const override { return FString(TEXT("https://github.com/ArtemIyX/UtilityAIUnreal")); }
-	
+
 	virtual void OnToolkitHostingStarted(const TSharedRef<IToolkit>& Toolkit) override;
 	virtual void OnToolkitHostingFinished(const TSharedRef<IToolkit>& Toolkit) override;
 
-protected:
-	TWeakObjectPtr<UUtilityAIStateWeighted> WorkingAsset = nullptr;
+public:
+	TWeakObjectPtr<UUtilityAIStateWeighted> GetWorkingAsset() const { return WorkingAsset; }
+
 };

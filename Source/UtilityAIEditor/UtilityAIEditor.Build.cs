@@ -9,22 +9,26 @@ public class UtilityAIEditor : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "UtilityAI",
+				"Core",
+				"UtilityAI",
+				"Slate",
+				"SlateCore",
+				"CoreUObject",
+				"Engine",
+				"EditorStyle",
+				"InputCore",
+				"Projects",
+				"UMG",
+				"AssetTools",
+				"AssetDefinition",
 			}
 		);
 
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"AssetTools",
-				"AssetDefinition",
 				"UnrealEd",
-				"CoreUObject",
-				"Engine",
-				"Slate",
-				"SlateCore",
-				"Projects",
-				"UMG"
+				"PropertyEditor"
 			}
 		);
 	}

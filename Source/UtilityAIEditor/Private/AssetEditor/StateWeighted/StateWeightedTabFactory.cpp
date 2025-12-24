@@ -3,6 +3,9 @@
 
 #include "AssetEditor/StateWeighted/StateWeightedTabFactory.h"
 
+#include "AssetEditor/StateWeighted/StateWeightedAssetEditorApp.h"
+#include "AssetEditor/StateWeighted/StateWeightedTabWidget.h"
+
 FStateWeightedTabFactory::FStateWeightedTabFactory(TSharedPtr<FStateWeightedAssetEditorApp> InApp)
 	: FWorkflowTabFactory(FName(TEXT("StateWeightedTab")),
 		StaticCastSharedPtr<FAssetEditorToolkit, FStateWeightedAssetEditorApp>(InApp))
@@ -15,7 +18,10 @@ FStateWeightedTabFactory::FStateWeightedTabFactory(TSharedPtr<FStateWeightedAsse
 
 TSharedRef<SWidget> FStateWeightedTabFactory::CreateTabBody(const FWorkflowTabSpawnInfo& Info) const
 {
-	return SNew(STextBlock).Text(FText::FromString(TEXT("This is a text widget")));
+	TSharedPtr<FStateWeightedAssetEditorApp> appPtr = AppWeakPtr.Pin();
+	TWeakObjectPtr<UUtilityAIStateWeighted> workingAsset = appPtr->GetWorkingAsset();
+
+	return SNew(SStateWeightedTabWidget).EditedAsset(workingAsset);
 }
 
 FText FStateWeightedTabFactory::GetTabToolTipText(const FWorkflowTabSpawnInfo& Info) const

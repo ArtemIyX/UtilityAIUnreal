@@ -36,16 +36,16 @@ class UTILITYAI_API UUtilityAIStateWeighted : public UUtilityAIState
 {
 	GENERATED_BODY()
 
-protected:
+public:
+	UUtilityAIStateWeighted(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	
+public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float BaseScore{ 0.0f };
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FWeightedInitParams> Sum;
-
-public:
-	UUtilityAIStateWeighted(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
 	virtual float GetScore_Implementation(const UUtilityAIContext* Context) const override;
