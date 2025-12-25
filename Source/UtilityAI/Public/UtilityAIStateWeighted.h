@@ -38,13 +38,12 @@ class UTILITYAI_API UUtilityAIStateWeighted : public UUtilityAIState
 
 public:
 	UUtilityAIStateWeighted(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	
+
 public:
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StateWeighted")
 	float BaseScore{ 0.0f };
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StateWeighted")
 	TArray<FWeightedInitParams> Sum;
 
 public:
