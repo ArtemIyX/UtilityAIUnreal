@@ -290,7 +290,15 @@ FReply SStateWeightedTabWidget::OnAddItem()
 {
 	if (EditedAsset.IsValid())
 	{
-		EditedAsset->Sum.Add(FWeightedInitParams());
+		FWeightedInitParams data = FWeightedInitParams();
+		UUtilityAIConvertObjectBase* floatConverter = NewObject<UUtilityAIConvertObjectBase>(EditedAsset.Get(),
+			UUtilityAIConvertObjectBase::StaticClass(), NAME_None, RF_Transactional);
+		if (floatConverter)
+		{
+			data.FloatConverter = floatConverter;
+		}
+		
+		EditedAsset->Sum.Add(data);
 		EditedAsset->MarkPackageDirty();
 		RefreshSumList();
 	}
@@ -354,7 +362,33 @@ FText SStateWeightedTabWidget::GetCurrentWeightNameText(int32 Index, TSharedPtr<
 
 void SStateWeightedTabWidget::OnFloatConverterClassChanged(UClass* InClass, int32 InIndex)
 {
-	EditedAsset.Get()->Sum[InIndex].FloatConverterClass = InClass;
+	if (!EditedAsset.IsValid())
+	{
+		return;
+	}
+	UUtilityAIStateWeighted* editedAsset = EditedAsset.Get();
+	if (!editedAsset->Sum.IsValidIndex(InIndex))
+	{
+		return;
+	}
+	FWeightedInitParams& arrayElement = editedAsset->Sum[InIndex];
+	arrayElement.FloatConverterClass = InClass;
+
+	if (arrayElement.FloatConverter)
+	{
+		arrayElement.FloatConverter->ConditionalBeginDestroy();
+	}
+	arrayElement.FloatConverter = nullptr;
+
+	if (InClass != nullptr)
+	{
+		UUtilityAIConvertObjectBase* floatConverter = NewObject<UUtilityAIConvertObjectBase>(editedAsset, InClass, NAME_None, RF_Transactional);
+		if (floatConverter)
+		{
+			arrayElement.FloatConverter = floatConverter;
+		}
+	}
+
 	EditedAsset.Get()->MarkPackageDirty();
 	RefreshSumList();
 }
@@ -367,5 +401,7 @@ TSharedRef<SWidget> SStateWeightedTabWidget::CreateFloatConverterDetails(int32 I
 		return SNew(STextBlock).Text(FText::FromString(TEXT("Select a class")));
 	}
 
-	return SNew(STextBlock).Text(FText::FromString(GetNameSafe(selectedClass)));
+	return SNew(STextBlock).Text(FText::FromString(
+			FString::Printf(TEXT("%s -> %s"), *GetNameSafe(selectedClass), *GetNameSafe(EditedAsset.Get()->Sum[InIndex].FloatConverter))
+			));
 }
