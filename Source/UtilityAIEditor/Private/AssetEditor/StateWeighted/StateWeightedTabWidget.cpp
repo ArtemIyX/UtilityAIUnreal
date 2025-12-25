@@ -13,6 +13,7 @@
 #include "Input/Reply.h"
 #include "SGameplayTagCombo.h"
 
+
 FReply SStateWeightedTabWidget::OnBaseScoreChanged(float NewValue)
 {
 	if (EditedAsset.IsValid())
@@ -188,6 +189,11 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 	TSharedPtr<IPropertyHandle> WeightNameHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, WeightName));
 	TSharedPtr<IPropertyHandle> ConsiderationHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, Consideration));
 	TSharedPtr<IPropertyHandle> FloatConverterHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, FloatConverter));
+	TSharedPtr<IPropertyHandle> FloatConverterClassHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, FloatConverterClass));
+
+	UObject* classValueObject;
+	FloatConverterClassHandle->GetValue(classValueObject);
+	UClass* classValue = Cast<UClass>(classValueObject);
 
 	return SNew(STableRow<TSharedPtr<int32>>, OwnerTable)
 		[
@@ -245,32 +251,24 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 				]
 			]
 
-			// FloatConverter - needs special handling for instanced objects
+			// FloatConverter - Class
 			+ SHorizontalBox::Slot()
 			.FillWidth(0.3f)
 			.Padding(5, 2)
 			[
-				SNew(SVerticalBox)
-				+ SVerticalBox::Slot()
-				.AutoHeight()
-				[
-					SNew(STextBlock)
-					.Text(FText::FromString("Float Converter"))
-					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 8))
-				]
-				+ SVerticalBox::Slot()
-				.AutoHeight()
-				[
-					FloatConverterHandle.IsValid()
-					? SNew(SObjectPropertyEntryBox)
-					                               .PropertyHandle(FloatConverterHandle)
-                            /*.AllowedClass(::StaticClass()) // Replace with your base class*/
-					                               .DisplayUseSelected(true)
-					                               .DisplayBrowse(true)
-					                               .EnableContentPicker(true)
-					                               .DisplayCompactSize(true)
-					: SNullWidget::NullWidget
-				]
+				SNew(SClassPropertyEntryBox)
+				.SelectedClass(classValue)
+				.AllowedClasses({ UUtilityAIConvertObjectBase::StaticClass() })
+				.OnSetClass_Lambda([this, Index](const UClass* InClass) {
+					OnFloatConverterClassChanged(const_cast<UClass*>(InClass), Index);
+				})
+			]
+
+			+ SHorizontalBox::Slot()
+			.FillWidth(0.3f)
+			.Padding(5, 2)
+			[
+				CreateFloatConverterDetails(Index)
 			]
 
 			// Remove button
@@ -286,6 +284,7 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 			]
 		];
 }
+
 
 FReply SStateWeightedTabWidget::OnAddItem()
 {
@@ -351,4 +350,22 @@ FText SStateWeightedTabWidget::GetCurrentWeightNameText(int32 Index, TSharedPtr<
 	}
 
 	return FText::FromString("Select...");
+}
+
+void SStateWeightedTabWidget::OnFloatConverterClassChanged(UClass* InClass, int32 InIndex)
+{
+	EditedAsset.Get()->Sum[InIndex].FloatConverterClass = InClass;
+	EditedAsset.Get()->MarkPackageDirty();
+	RefreshSumList();
+}
+
+TSharedRef<SWidget> SStateWeightedTabWidget::CreateFloatConverterDetails(int32 InIndex)
+{
+	UClass* selectedClass = EditedAsset.Get()->Sum[InIndex].FloatConverterClass;
+	if (selectedClass == nullptr)
+	{
+		return SNew(STextBlock).Text(FText::FromString(TEXT("Select a class")));
+	}
+
+	return SNew(STextBlock).Text(FText::FromString(GetNameSafe(selectedClass)));
 }

@@ -45,11 +45,15 @@ private:
 	TArray<TSharedPtr<int32>> SumItems;
     
 	void RefreshSumList();
+
 	TSharedRef<ITableRow> OnGenerateRowForList(TSharedPtr<int32> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	FReply OnAddItem();
 	FReply OnRemoveItem(int32 Index);
 	void InitializeDebugWeightNames();
 	void OnWeightNameSelected(TSharedPtr<FString> NewSelection, ESelectInfo::Type SelectInfo, int32 Index, TSharedPtr<IPropertyHandle> WeightNameHandle);
 	TSharedRef<SWidget> OnGenerateWeightNameWidget(TSharedPtr<FString> InItem);
+	TSharedRef<SWidget> CreateFloatConverterDetails(int32 InIndex);
 	FText GetCurrentWeightNameText(int32 Index, TSharedPtr<IPropertyHandle> WeightNameHandle) const;
+
+	void OnFloatConverterClassChanged(UClass* InClass, int32 InIndex);
 };

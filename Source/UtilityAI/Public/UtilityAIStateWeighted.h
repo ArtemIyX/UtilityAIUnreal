@@ -15,7 +15,8 @@ struct UTILITYAI_API FWeightedInitParams
 
 public:
 	FWeightedInitParams()
-		: FloatConverter(nullptr) {}
+		: FloatConverter(nullptr)
+		, FloatConverterClass(UUtilityAIConvertObjectBase::StaticClass()) {}
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -23,6 +24,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag Consideration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUtilityAIConvertObjectBase> FloatConverterClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
 	UUtilityAIConvertObjectBase* FloatConverter;
