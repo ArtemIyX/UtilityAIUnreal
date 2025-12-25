@@ -199,83 +199,92 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 		[
 			SNew(SHorizontalBox)
 
-			// WeightName - Now with ComboBox
+			// Column 1: Weight Name and Consideration (stacked vertically)
 			+ SHorizontalBox::Slot()
-			.FillWidth(0.2f)
-			.Padding(5, 2)
+			  .FillWidth(0.3f) // Adjusted width to accommodate both fields
+			  .Padding(5, 2)
 			[
 				SNew(SVerticalBox)
+
+				// Weight Name subsection
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				[
-					SNew(STextBlock)
-					.Text(FText::FromString("Weight Name"))
-					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 8))
-				]
-				+ SVerticalBox::Slot()
-				.AutoHeight()
-				[
-					WeightNameHandle.IsValid()
-					? SNew(SComboBox<TSharedPtr<FString>>)
-					.OptionsSource(&DebugWeightNames)
-					.OnGenerateWidget(this, &SStateWeightedTabWidget::OnGenerateWeightNameWidget)
-					.OnSelectionChanged(this, &SStateWeightedTabWidget::OnWeightNameSelected, Index, WeightNameHandle)
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(0, 0, 0, 5)
 					[
 						SNew(STextBlock)
-						.Text(this, &SStateWeightedTabWidget::GetCurrentWeightNameText, Index, WeightNameHandle)
+						.Text(FText::FromString("Weight Name"))
+						.Font(FCoreStyle::GetDefaultFontStyle("Regular", 8))
 					]
-					: SNullWidget::NullWidget
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						WeightNameHandle.IsValid()
+						? SNew(SComboBox<TSharedPtr<FString>>)
+						.OptionsSource(&DebugWeightNames)
+						.OnGenerateWidget(this, &SStateWeightedTabWidget::OnGenerateWeightNameWidget)
+						.OnSelectionChanged(this, &SStateWeightedTabWidget::OnWeightNameSelected, Index, WeightNameHandle)
+						[
+							SNew(STextBlock)
+							.Text(this, &SStateWeightedTabWidget::GetCurrentWeightNameText, Index, WeightNameHandle)
+						]
+						: SNullWidget::NullWidget
+					]
+				]
+
+				// Consideration subsection
+				+ SVerticalBox::Slot()
+				.FillHeight(0.33f) // ~1/3 of the column
+				[
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(0, 0, 0, 5)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString("Consideration"))
+						.Font(FCoreStyle::GetDefaultFontStyle("Regular", 8))
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						ConsiderationHandle.IsValid()
+						? SNew(SGameplayTagCombo)
+						.PropertyHandle(ConsiderationHandle)
+						: SNullWidget::NullWidget
+					]
 				]
 			]
 
-			// Consideration - Gameplay Tag Selector
+			// Column 2: FloatConverter Class and Details (stacked vertically)
 			+ SHorizontalBox::Slot()
-			.FillWidth(0.1f)
-			.Padding(5, 2)
+			  .FillWidth(0.6f) // Takes most of the remaining space
+			  .Padding(5, 2)
 			[
 				SNew(SVerticalBox)
+
+				// Class selector row
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(0, 0, 0, 5)
+				[
+					SNew(SClassPropertyEntryBox)
+					.SelectedClass(classValue)
+					.AllowedClasses({ UUtilityAIConvertObjectBase::StaticClass() })
+					.OnSetClass_Lambda([this, Index](const UClass* InClass) {
+						OnFloatConverterClassChanged(const_cast<UClass*>(InClass), Index);
+					})
+				]
+
+				// Details widget row
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				[
-					SNew(STextBlock)
-					.Text(FText::FromString("Consideration"))
-					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 8))
+					EditedAsset.IsValid() ? CreateFloatDetailsWidget(Index) : SNullWidget::NullWidget
 				]
-				+ SVerticalBox::Slot()
-				.AutoHeight()
-				[
-					ConsiderationHandle.IsValid()
-					? SNew(SGameplayTagCombo)
-					.PropertyHandle(ConsiderationHandle)
-					: SNullWidget::NullWidget
-				]
-			]
-
-			// FloatConverter - Class
-			+ SHorizontalBox::Slot()
-			.FillWidth(0.2f)
-			.Padding(5, 2)
-			[
-				SNew(SClassPropertyEntryBox)
-				.SelectedClass(classValue)
-				.AllowedClasses({ UUtilityAIConvertObjectBase::StaticClass() })
-				.OnSetClass_Lambda([this, Index](const UClass* InClass) {
-					OnFloatConverterClassChanged(const_cast<UClass*>(InClass), Index);
-				})
-			]
-
-			/*+ SHorizontalBox::Slot()
-			.FillWidth(0.3f)
-			.Padding(5, 2)
-			[
-				CreateFloatClassDebugWidget(Index)
-			]*/
-
-			+ SHorizontalBox::Slot()
-			.FillWidth(0.5f)
-			.Padding(5, 2)
-			[
-				EditedAsset.IsValid() ? CreateFloatDetailsWidget(Index) : SNullWidget::NullWidget
 			]
 
 			// Remove button
