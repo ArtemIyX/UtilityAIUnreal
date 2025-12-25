@@ -21,6 +21,8 @@ public class UtilityAIEditor : ModuleRules
 				"UMG",
 				"AssetTools",
 				"AssetDefinition",
+				"GameplayTags",
+				"GameplayTagsEditor"
 			}
 		);
 

@@ -11,6 +11,7 @@
 #include "UtilityAIStateWeighted.h"
 #include "Widgets/Input/SNumericEntryBox.h"
 #include "Input/Reply.h"
+#include "SGameplayTagCombo.h"
 
 FReply SStateWeightedTabWidget::OnBaseScoreChanged(float NewValue)
 {
@@ -221,7 +222,7 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 				]
 			]
 
-			// Consideration
+			// Consideration - Gameplay Tag Selector
 			+ SHorizontalBox::Slot()
 			.FillWidth(0.3f)
 			.Padding(5, 2)
@@ -238,7 +239,8 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 				.AutoHeight()
 				[
 					ConsiderationHandle.IsValid()
-					? ConsiderationHandle->CreatePropertyValueWidget(false)
+					? SNew(SGameplayTagCombo)
+					.PropertyHandle(ConsiderationHandle)
 					: SNullWidget::NullWidget
 				]
 			]
