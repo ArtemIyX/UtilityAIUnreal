@@ -52,7 +52,8 @@ private:
 	void InitializeDebugWeightNames();
 	void OnWeightNameSelected(TSharedPtr<FString> NewSelection, ESelectInfo::Type SelectInfo, int32 Index, TSharedPtr<IPropertyHandle> WeightNameHandle);
 	TSharedRef<SWidget> OnGenerateWeightNameWidget(TSharedPtr<FString> InItem);
-	TSharedRef<SWidget> CreateFloatConverterDetails(int32 InIndex);
+	TSharedRef<SWidget> CreateFloatClassDebugWidget(int32 InIndex);
+	TSharedRef<SWidget> CreateFloatDetailsWidget(int32 InIndex);
 	FText GetCurrentWeightNameText(int32 Index, TSharedPtr<IPropertyHandle> WeightNameHandle) const;
 
 	void OnFloatConverterClassChanged(UClass* InClass, int32 InIndex);

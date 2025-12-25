@@ -201,7 +201,7 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 
 			// WeightName - Now with ComboBox
 			+ SHorizontalBox::Slot()
-			.FillWidth(0.3f)
+			.FillWidth(0.2f)
 			.Padding(5, 2)
 			[
 				SNew(SVerticalBox)
@@ -230,7 +230,7 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 
 			// Consideration - Gameplay Tag Selector
 			+ SHorizontalBox::Slot()
-			.FillWidth(0.3f)
+			.FillWidth(0.1f)
 			.Padding(5, 2)
 			[
 				SNew(SVerticalBox)
@@ -253,7 +253,7 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 
 			// FloatConverter - Class
 			+ SHorizontalBox::Slot()
-			.FillWidth(0.3f)
+			.FillWidth(0.2f)
 			.Padding(5, 2)
 			[
 				SNew(SClassPropertyEntryBox)
@@ -264,11 +264,18 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 				})
 			]
 
-			+ SHorizontalBox::Slot()
+			/*+ SHorizontalBox::Slot()
 			.FillWidth(0.3f)
 			.Padding(5, 2)
 			[
-				CreateFloatConverterDetails(Index)
+				CreateFloatClassDebugWidget(Index)
+			]*/
+
+			+ SHorizontalBox::Slot()
+			.FillWidth(0.5f)
+			.Padding(5, 2)
+			[
+				EditedAsset.IsValid() ? CreateFloatDetailsWidget(Index) : SNullWidget::NullWidget
 			]
 
 			// Remove button
@@ -297,7 +304,7 @@ FReply SStateWeightedTabWidget::OnAddItem()
 		{
 			data.FloatConverter = floatConverter;
 		}
-		
+
 		EditedAsset->Sum.Add(data);
 		EditedAsset->MarkPackageDirty();
 		RefreshSumList();
@@ -393,7 +400,7 @@ void SStateWeightedTabWidget::OnFloatConverterClassChanged(UClass* InClass, int3
 	RefreshSumList();
 }
 
-TSharedRef<SWidget> SStateWeightedTabWidget::CreateFloatConverterDetails(int32 InIndex)
+TSharedRef<SWidget> SStateWeightedTabWidget::CreateFloatClassDebugWidget(int32 InIndex)
 {
 	UClass* selectedClass = EditedAsset.Get()->Sum[InIndex].FloatConverterClass;
 	if (selectedClass == nullptr)
@@ -404,4 +411,31 @@ TSharedRef<SWidget> SStateWeightedTabWidget::CreateFloatConverterDetails(int32 I
 	return SNew(STextBlock).Text(FText::FromString(
 			FString::Printf(TEXT("%s -> %s"), *GetNameSafe(selectedClass), *GetNameSafe(EditedAsset.Get()->Sum[InIndex].FloatConverter))
 			));
+}
+
+TSharedRef<SWidget> SStateWeightedTabWidget::CreateFloatDetailsWidget(int32 InIndex)
+{
+	FPropertyEditorModule& propertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+
+	FDetailsViewArgs args;
+	{
+		args.bAllowSearch = false;
+		args.bHideSelectionTip = true;
+		args.bLockable = false;
+		args.bSearchInitialKeyFocus = true;
+		args.bUpdatesFromSelection = false;
+		args.NotifyHook = nullptr;
+		args.bShowOptions = true;
+		args.bShowModifiedPropertiesOption = false;
+		args.bShowScrollBar = false;
+	}
+
+	if (!EditedAsset.Get()->Sum.IsValidIndex(InIndex))
+	{
+		return SNullWidget::NullWidget;
+	}
+	TSharedRef<IDetailsView> detailsView = propertyModule.CreateDetailView(args);
+	detailsView->SetObject(EditedAsset.Get()->Sum[InIndex].FloatConverter);
+
+	return detailsView;
 }
