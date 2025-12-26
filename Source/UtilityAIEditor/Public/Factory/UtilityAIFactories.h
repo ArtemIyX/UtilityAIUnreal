@@ -11,6 +11,7 @@
 #include "UtilityAIState.h"
 #include "UtilityAIConvertObjectBase.h"
 #include "UtilityAIStateWeighted.h"
+#include "UtilityAIWeight.h"
 #include "UtilityAIFactories.generated.h"
 
 namespace UtilityAI
@@ -24,6 +25,7 @@ namespace UtilityAI
 		inline TSubclassOf<UObject> StateWeighted = UUtilityAIStateWeighted::StaticClass();
 		inline TSubclassOf<UObject> Consideration = UUtilityAIConsideration::StaticClass();
 		inline TSubclassOf<UObject> Converter = UUtilityAIConvertObjectBase::StaticClass();
+		inline TSubclassOf<UObject> Weight = UUtilityAIWeight::StaticClass();
 	}
 
 }
@@ -214,5 +216,37 @@ public:
 	{
 		SupportedClass = UtilityAI::Classes::Converter;
 		Name = FText::FromString("Float Converter");
+	}
+};
+
+// Weight ---------------------------------------------------------------------
+
+UCLASS()
+class UTILITYAIEDITOR_API UWeightObjectFactory : public UFactory
+{
+	GENERATED_BODY()
+
+public:
+	UWeightObjectFactory(const FObjectInitializer& ObjectInitializer)
+		: Super(ObjectInitializer)
+	{
+		SupportedClass = UtilityAI::Classes::Weight;
+	}
+
+	virtual bool CanCreateNew() const override { return true; }
+
+	virtual UObject* FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn, FName CallingContext) override
+	{
+		return NewObject<UUtilityAIWeight>(InParent, InName, Flags);
+	}
+};
+
+class FAssetTypeActions_WeightObject : public FAssetTypeActions_UtilityAI
+{
+public:
+	FAssetTypeActions_WeightObject()
+	{
+		SupportedClass = UtilityAI::Classes::Weight;
+		Name = FText::FromString("Weight (Object)");
 	}
 };

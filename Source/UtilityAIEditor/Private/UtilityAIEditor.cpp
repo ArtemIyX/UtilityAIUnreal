@@ -36,6 +36,7 @@ void FUtilityAIEditorModule::StartupModule()
 		RegisterAssetActions<FAssetTypeActions_ProcessorStateWeighted>(assetTools);
 		RegisterAssetActions<FAssetTypeActions_ProcessorConsideration>(assetTools);
 		RegisterAssetActions<FAssetTypeActions_Converter>(assetTools);
+		RegisterAssetActions<FAssetTypeActions_WeightObject>(assetTools);
 	}
 }
 
@@ -113,13 +114,19 @@ TSharedRef<FSlateStyleSet> FUtilityAIEditorModule::Create()
 		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContextCollector16.png")), icon16));
 
 	style->Set("ClassThumbnail.UtilityAIContext",
-		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContext16.png")), icon128));
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContext128.png")), icon128));
 
 	style->Set("ClassIcon.UtilityAIContext",
-		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContext128.png")), icon16));
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIContext16.png")), icon16));
 
 	style->Set("ClassIcon.UtilityAIConvertObjectBase",
 		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIConvertObject16.png")), icon16));
+
+	style->Set("ClassThumbnail.UtilityAIWeight",
+	new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIWeight128.png")), icon128));
+
+	style->Set("ClassIcon.UtilityAIWeight",
+		new FSlateImageBrush(style->RootToContentDir(TEXT("UtilityAIWeight16.png")), icon16));
 
 	return style;
 }
