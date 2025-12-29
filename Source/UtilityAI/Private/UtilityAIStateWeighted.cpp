@@ -4,9 +4,13 @@
 #include "UtilityAIStateWeighted.h"
 
 #include "UtilityAIComponent.h"
+#include "UtilityAIWeight.h"
 
 UUtilityAIStateWeighted::UUtilityAIStateWeighted(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer) {}
+	: Super(ObjectInitializer)
+{
+	WeightTemplate = nullptr;
+}
 
 float UUtilityAIStateWeighted::GetScore_Implementation(const UUtilityAIContext* Context) const
 {

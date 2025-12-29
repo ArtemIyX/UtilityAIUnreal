@@ -8,6 +8,8 @@
 #include "UtilityAIStateWeighted.generated.h"
 
 
+class UUtilityAIWeight;
+
 USTRUCT(Blueprintable, BlueprintType)
 struct UTILITYAI_API FWeightedInitParams
 {
@@ -15,8 +17,8 @@ struct UTILITYAI_API FWeightedInitParams
 
 public:
 	FWeightedInitParams()
-		: FloatConverter(nullptr)
-		, FloatConverterClass(UUtilityAIConvertObjectBase::StaticClass()) {}
+		: FloatConverterClass(UUtilityAIConvertObjectBase::StaticClass())
+		, FloatConverter(nullptr) {}
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -25,7 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag Consideration;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, NoClear)
 	TSubclassOf<UUtilityAIConvertObjectBase> FloatConverterClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
@@ -47,6 +49,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StateWeighted")
 	float BaseScore{ 0.0f };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StateWeighted")
+	class UUtilityAIWeight* WeightTemplate; 
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="StateWeighted")
 	TArray<FWeightedInitParams> Sum;
 

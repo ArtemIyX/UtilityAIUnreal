@@ -15,6 +15,7 @@ public:
 		SLATE_ARGUMENT(TWeakObjectPtr<UUtilityAIStateWeighted>, EditedAsset)
 	SLATE_END_ARGS()
 
+
 	void Construct(const FArguments& InArgs);
 	
 protected:
@@ -29,32 +30,39 @@ public:
 
 private:
 
+	TSharedPtr<SWidget> BaseScoreWidget;
 
+	TSharedPtr<SWidget> WeightTemplateClassWidget;
 	
 	// Debug weight names for combo box
-	TArray<TSharedPtr<FString>> DebugWeightNames;
+	TArray<TSharedPtr<FString>> WeightNames;
     
 	// Store selected weight name per row (key = Index)
 	TMap<int32, TSharedPtr<FString>> SelectedWeightNames;
 	
-	TSharedPtr<SWidget> BaseScoreWidget;
+
 	TSharedPtr<IPropertyHandleArray> SumArrayHandle;
+	TSharedPtr<IPropertyHandle> WeightTemplateObjectHandle;
 	TSharedPtr<IPropertyRowGenerator> PropertyRowGenerator;
 
 	TSharedPtr<SListView<TSharedPtr<int32>>> SumListWidget;
 	TArray<TSharedPtr<int32>> SumItems;
     
 	void RefreshSumList();
-
 	TSharedRef<ITableRow> OnGenerateRowForList(TSharedPtr<int32> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	FReply OnAddItem();
 	FReply OnRemoveItem(int32 Index);
 	void InitializeDebugWeightNames();
+	void InitializeWeightComboItems();
 	void OnWeightNameSelected(TSharedPtr<FString> NewSelection, ESelectInfo::Type SelectInfo, int32 Index, TSharedPtr<IPropertyHandle> WeightNameHandle);
 	TSharedRef<SWidget> OnGenerateWeightNameWidget(TSharedPtr<FString> InItem);
 	TSharedRef<SWidget> CreateFloatClassDebugWidget(int32 InIndex);
 	TSharedRef<SWidget> CreateFloatDetailsWidget(int32 InIndex);
 	FText GetCurrentWeightNameText(int32 Index, TSharedPtr<IPropertyHandle> WeightNameHandle) const;
-
 	void OnFloatConverterClassChanged(UClass* InClass, int32 InIndex);
+
+	void WeightTemplateObjectChanged(const FAssetData& InAssetData);
+	//void OnWeightTemplateClassChanged(UClass* InClass);
+
+	TSharedPtr<IPropertyHandle> FindProperty(const TArray<TSharedRef<IDetailTreeNode>>& InRootNodes, const FName& InPropertyName);
 };

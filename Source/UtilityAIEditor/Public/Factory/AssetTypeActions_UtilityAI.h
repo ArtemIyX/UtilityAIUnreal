@@ -20,6 +20,6 @@ protected:
 public:
 	virtual UClass* GetSupportedClass() const override { return SupportedClass; };
 	virtual FText GetName() const override { return Name; };
-	virtual FColor GetTypeColor() const override { return FColor::Cyan; }
+	virtual FColor GetTypeColor() const override { return FColor::FromHex("#641896"); }
 	virtual uint32 GetCategories() override;
 };

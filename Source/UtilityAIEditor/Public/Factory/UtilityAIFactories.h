@@ -12,6 +12,7 @@
 #include "UtilityAIConvertObjectBase.h"
 #include "UtilityAIStateWeighted.h"
 #include "UtilityAIWeight.h"
+#include "Kismet2/KismetEditorUtilities.h"
 #include "UtilityAIFactories.generated.h"
 
 namespace UtilityAI

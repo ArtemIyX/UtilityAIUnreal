@@ -12,7 +12,7 @@
 #include "Widgets/Input/SNumericEntryBox.h"
 #include "Input/Reply.h"
 #include "SGameplayTagCombo.h"
-
+#include "UtilityAIWeight.h"
 
 FReply SStateWeightedTabWidget::OnBaseScoreChanged(float NewValue)
 {
@@ -40,10 +40,29 @@ float SStateWeightedTabWidget::GetBaseScore() const
 	return 0.0f;
 }
 
+
+TSharedPtr<IPropertyHandle> SStateWeightedTabWidget::FindProperty(const TArray<TSharedRef<IDetailTreeNode>>& InRootNodes, const FName& InPropertyName)
+{
+	for (const TSharedRef<IDetailTreeNode>& node : InRootNodes)
+	{
+		TArray<TSharedRef<IDetailTreeNode>> children;
+		node->GetChildren(children);
+		for (const TSharedRef<IDetailTreeNode>& child : children)
+		{
+			TSharedPtr<IPropertyHandle> propertyHandle = child->CreatePropertyHandle();
+			if (propertyHandle.IsValid() && propertyHandle->GetProperty()->GetFName() == /*GET_MEMBER_NAME_CHECKED(UUtilityAIStateWeighted, Sum)*/ InPropertyName)
+			{
+				return propertyHandle;
+			}
+		}
+	}
+	return {};
+}
+
 void SStateWeightedTabWidget::Construct(const FArguments& InArgs)
 {
 	EditedAsset = InArgs._EditedAsset;
-	InitializeDebugWeightNames();
+	//InitializeDebugWeightNames();
 
 	FPropertyEditorModule& propertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
@@ -56,27 +75,24 @@ void SStateWeightedTabWidget::Construct(const FArguments& InArgs)
 	PropertyRowGenerator = propertyModule.CreatePropertyRowGenerator(args);
 	PropertyRowGenerator->SetObjects({ EditedAsset.Get() });
 
-	const TArray<TSharedRef<IDetailTreeNode>>& RootNodes = PropertyRowGenerator->GetRootTreeNodes();
-	for (const TSharedRef<IDetailTreeNode>& Node : RootNodes)
-	{
-		TArray<TSharedRef<IDetailTreeNode>> children;
-		Node->GetChildren(children);
-		for (const TSharedRef<IDetailTreeNode>& child : children)
-		{
-			TSharedPtr<IPropertyHandle> PropertyHandle = child->CreatePropertyHandle();
-			if (PropertyHandle.IsValid() && PropertyHandle->GetProperty()->GetFName() == GET_MEMBER_NAME_CHECKED(UUtilityAIStateWeighted, Sum))
-			{
-				SumArrayHandle = PropertyHandle->AsArray();
-				break;
-			}
-		}
-	}
+	const TArray<TSharedRef<IDetailTreeNode>>& rootNodes = PropertyRowGenerator->GetRootTreeNodes();
+
+	SumArrayHandle = FindProperty(rootNodes, GET_MEMBER_NAME_CHECKED(UUtilityAIStateWeighted, Sum))->AsArray();
+	WeightTemplateObjectHandle = FindProperty(rootNodes, GET_MEMBER_NAME_CHECKED(UUtilityAIStateWeighted, WeightTemplate));
+
+	InitializeWeightComboItems();
 
 	FSinglePropertyParams initParams;
 	initParams.NamePlacement = EPropertyNamePlacement::Left;
 	BaseScoreWidget = propertyModule.CreateSingleProperty(
 		EditedAsset.Get(),
 		GET_MEMBER_NAME_CHECKED(UUtilityAIStateWeighted, BaseScore),
+		initParams
+		);
+
+	WeightTemplateClassWidget = propertyModule.CreateSingleProperty(
+		EditedAsset.Get(),
+		GET_MEMBER_NAME_CHECKED(UUtilityAIStateWeighted, WeightTemplate),
 		initParams
 		);
 
@@ -96,6 +112,24 @@ void SStateWeightedTabWidget::Construct(const FArguments& InArgs)
 		.AutoHeight()
 		[
 			BaseScoreWidget.ToSharedRef()
+		]
+		+ SVerticalBox::Slot()
+		.Padding(20, 10)
+		.AutoHeight()
+		[
+			SNew(SObjectPropertyEntryBox)
+			.PropertyHandle(WeightTemplateObjectHandle)
+			.OnObjectChanged(this, &SStateWeightedTabWidget::WeightTemplateObjectChanged)
+			.AllowClear(false)
+			.AllowCreate(true)
+			.AllowedClass(UUtilityAIWeight::StaticClass())
+			/*WeightTemplateClassWidget.ToSharedRef()*/
+			/*SNew(SClassPropertyEntryBox)
+			.SelectedClass(EditedAsset->WeightTemplate)
+			.AllowedClasses({ UUtilityAIWeight::StaticClass() })
+			.OnSetClass_Lambda([this](const UClass* InClass) {
+				OnWeightTemplateClassChanged(const_cast<UClass*>(InClass));
+			})*/
 		]
 		+ SVerticalBox::Slot()
 		.Padding(20, 10)
@@ -143,6 +177,15 @@ void SStateWeightedTabWidget::Construct(const FArguments& InArgs)
 	RefreshSumList();
 }
 
+void SStateWeightedTabWidget::WeightTemplateObjectChanged(const FAssetData& InAssetData)
+{
+	UObject* asset = InAssetData.GetAsset();
+	if (UUtilityAIWeight* weight = Cast<UUtilityAIWeight>(asset))
+	{
+		RefreshSumList();
+	}
+}
+
 void SStateWeightedTabWidget::RefreshSumList()
 {
 	SumItems.Empty();
@@ -163,7 +206,7 @@ void SStateWeightedTabWidget::RefreshSumList()
 
 TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<int32> Item, const TSharedRef<STableViewBase>& OwnerTable)
 {
-	int32 Index = *Item;
+	int32 index = *Item;
 
 	if (!SumArrayHandle.IsValid())
 	{
@@ -175,24 +218,24 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 
 	uint32 n;
 	SumArrayHandle->GetNumElements(n);
-	if (n == 0 || static_cast<uint32>(Index) >= n)
+	if (n == 0 || static_cast<uint32>(index) >= n)
 	{
 		return SNew(STableRow<TSharedPtr<int32>>, OwnerTable)
 			[
-				SNew(STextBlock).Text(FText::FromString(FString::Printf(TEXT("Invalid Index Handle %d"), Index)))
+				SNew(STextBlock).Text(FText::FromString(FString::Printf(TEXT("Invalid Index Handle %d"), index)))
 			];
 	}
 
-	TSharedRef<IPropertyHandle> ElementHandle = SumArrayHandle->GetElement(Index);
+	TSharedRef<IPropertyHandle> elementHandle = SumArrayHandle->GetElement(index);
 
 	// Get handles for each property
-	TSharedPtr<IPropertyHandle> WeightNameHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, WeightName));
-	TSharedPtr<IPropertyHandle> ConsiderationHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, Consideration));
-	TSharedPtr<IPropertyHandle> FloatConverterHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, FloatConverter));
-	TSharedPtr<IPropertyHandle> FloatConverterClassHandle = ElementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, FloatConverterClass));
+	TSharedPtr<IPropertyHandle> weightNameHandle = elementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, WeightName));
+	TSharedPtr<IPropertyHandle> considerationHandle = elementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, Consideration));
+	TSharedPtr<IPropertyHandle> floatConverterHandle = elementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, FloatConverter));
+	TSharedPtr<IPropertyHandle> floatConverterClassHandle = elementHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FWeightedInitParams, FloatConverterClass));
 
 	UObject* classValueObject;
-	FloatConverterClassHandle->GetValue(classValueObject);
+	floatConverterClassHandle->GetValue(classValueObject);
 	UClass* classValue = Cast<UClass>(classValueObject);
 
 	return SNew(STableRow<TSharedPtr<int32>>, OwnerTable)
@@ -222,14 +265,14 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 					+ SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						WeightNameHandle.IsValid()
+						weightNameHandle.IsValid()
 						? SNew(SComboBox<TSharedPtr<FString>>)
-						.OptionsSource(&DebugWeightNames)
+						.OptionsSource(&WeightNames)
 						.OnGenerateWidget(this, &SStateWeightedTabWidget::OnGenerateWeightNameWidget)
-						.OnSelectionChanged(this, &SStateWeightedTabWidget::OnWeightNameSelected, Index, WeightNameHandle)
+						.OnSelectionChanged(this, &SStateWeightedTabWidget::OnWeightNameSelected, index, weightNameHandle)
 						[
 							SNew(STextBlock)
-							.Text(this, &SStateWeightedTabWidget::GetCurrentWeightNameText, Index, WeightNameHandle)
+							.Text(this, &SStateWeightedTabWidget::GetCurrentWeightNameText, index, weightNameHandle)
 						]
 						: SNullWidget::NullWidget
 					]
@@ -251,9 +294,9 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 					+ SVerticalBox::Slot()
 					.AutoHeight()
 					[
-						ConsiderationHandle.IsValid()
+						considerationHandle.IsValid()
 						? SNew(SGameplayTagCombo)
-						.PropertyHandle(ConsiderationHandle)
+						.PropertyHandle(considerationHandle)
 						: SNullWidget::NullWidget
 					]
 				]
@@ -274,8 +317,8 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 					SNew(SClassPropertyEntryBox)
 					.SelectedClass(classValue)
 					.AllowedClasses({ UUtilityAIConvertObjectBase::StaticClass() })
-					.OnSetClass_Lambda([this, Index](const UClass* InClass) {
-						OnFloatConverterClassChanged(const_cast<UClass*>(InClass), Index);
+					.OnSetClass_Lambda([this, index](const UClass* InClass) {
+						OnFloatConverterClassChanged(const_cast<UClass*>(InClass), index);
 					})
 				]
 
@@ -283,7 +326,7 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				[
-					EditedAsset.IsValid() ? CreateFloatDetailsWidget(Index) : SNullWidget::NullWidget
+					EditedAsset.IsValid() ? CreateFloatDetailsWidget(index) : SNullWidget::NullWidget
 				]
 			]
 
@@ -296,7 +339,7 @@ TSharedRef<ITableRow> SStateWeightedTabWidget::OnGenerateRowForList(TSharedPtr<i
 				SNew(SButton)
 				.Text(FText::FromString("X"))
 				.ButtonStyle(FAppStyle::Get(), "SimpleButton")
-				.OnClicked(this, &SStateWeightedTabWidget::OnRemoveItem, Index)
+				.OnClicked(this, &SStateWeightedTabWidget::OnRemoveItem, index)
 			]
 		];
 }
@@ -334,11 +377,38 @@ FReply SStateWeightedTabWidget::OnRemoveItem(int32 Index)
 
 void SStateWeightedTabWidget::InitializeDebugWeightNames()
 {
-	DebugWeightNames.Empty();
-	DebugWeightNames.Add(MakeShared<FString>("a"));
-	DebugWeightNames.Add(MakeShared<FString>("b"));
-	DebugWeightNames.Add(MakeShared<FString>("c"));
-	DebugWeightNames.Add(MakeShared<FString>("d"));
+	WeightNames.Empty();
+	WeightNames.Add(MakeShared<FString>("a"));
+	WeightNames.Add(MakeShared<FString>("b"));
+	WeightNames.Add(MakeShared<FString>("c"));
+	WeightNames.Add(MakeShared<FString>("d"));
+}
+
+void SStateWeightedTabWidget::InitializeWeightComboItems()
+{
+	WeightNames.Empty();
+	if (!EditedAsset.IsValid())
+		return;
+
+	UUtilityAIWeight* weightTemplate = EditedAsset->WeightTemplate;
+	if (!weightTemplate)
+	{
+		WeightNames.Add(MakeShared<FString>("Select WeightTemplate"));
+	}
+	else
+	{
+		if (weightTemplate)
+		{
+			TArray<FString> keys;
+			weightTemplate->WeightMap.GetKeys(keys);
+			const int32 n = keys.Num();
+			WeightNames.Reserve(n);
+			for (int32 i = 0; i < n; i++)
+			{
+				WeightNames.Add(MakeShared<FString>(keys[i]));
+			}
+		}
+	}
 }
 
 void SStateWeightedTabWidget::OnWeightNameSelected(TSharedPtr<FString> NewSelection, ESelectInfo::Type SelectInfo, int32 Index, TSharedPtr<IPropertyHandle> WeightNameHandle)
@@ -408,6 +478,16 @@ void SStateWeightedTabWidget::OnFloatConverterClassChanged(UClass* InClass, int3
 	EditedAsset.Get()->MarkPackageDirty();
 	RefreshSumList();
 }
+
+
+/*
+void SStateWeightedTabWidget::OnWeightTemplateClassChanged(UClass* InClass)
+{
+
+	RefreshSumList();
+}
+*/
+
 
 TSharedRef<SWidget> SStateWeightedTabWidget::CreateFloatClassDebugWidget(int32 InIndex)
 {
